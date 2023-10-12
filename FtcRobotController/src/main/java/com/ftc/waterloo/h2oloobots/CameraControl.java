@@ -3,6 +3,8 @@ package com.ftc.waterloo.h2oloobots;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
