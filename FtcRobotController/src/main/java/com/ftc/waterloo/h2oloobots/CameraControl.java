@@ -3,6 +3,8 @@ package com.ftc.waterloo.h2oloobots;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
@@ -88,7 +90,7 @@ public class CameraControl {
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
-        builder.addProcessor(processor);
+//        builder.addProcessor(processor);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -98,6 +100,7 @@ public class CameraControl {
 
     }
 
+    @SuppressLint("DefaultLocale")
     public void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
