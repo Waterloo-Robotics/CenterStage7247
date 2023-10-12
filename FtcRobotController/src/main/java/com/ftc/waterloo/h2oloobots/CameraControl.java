@@ -1,5 +1,7 @@
 package com.ftc.waterloo.h2oloobots;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -83,6 +85,7 @@ public class CameraControl {
 
     }
 
+    @SuppressLint("DefaultLocale")
     public void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
