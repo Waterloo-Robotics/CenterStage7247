@@ -20,10 +20,10 @@ public class OdometryControl {
 
     /** We use a proportional gain controller for our odometry, these are just different
      * controller's gain levels.*/
-    public static double P_gen_forwardback = 0.03;
+    public static double P_gen_forwardback = 0.02;
     public static double P_gen_strafe = 0.05;
     public static double P_gen_turn = 0.03;
-    public static double P_differential = 0.1;
+    public static double P_differential = 0.2;
 
     /** These variables store the position at the start of the move.
      * They are necessary to maintain knowledge of where we are on the field. */
@@ -105,7 +105,7 @@ public class OdometryControl {
         );
         rightEncoder = new Encoder(
                 hardwareMap,
-                "fr",
+                "bl",
                 8192,
                 deadWheelDiameter,
                 Encoder.MeasurementUnit.MM,
@@ -113,7 +113,7 @@ public class OdometryControl {
         );
         horizEncoder = new Encoder(
                 hardwareMap,
-                "br",
+                "fr",
                 8192,
                 deadWheelDiameter,
                 Encoder.MeasurementUnit.MM,
@@ -121,9 +121,9 @@ public class OdometryControl {
         );
 
         // if any encoders need reversed, do so here.
-//        leftEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-//        rightEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-//        horizEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
+//        leftEncoder.setInverted(true);
+        rightEncoder.setInverted(true);
+//        horizEncoder.setInverted(true);
 
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -201,7 +201,7 @@ public class OdometryControl {
 
             error = distanceTravelled - INCHES;
 
-            differentialError = rightTravelled - leftTravelled;
+            differentialError = leftTravelled - rightTravelled;
 
             if (INCHES > 10) { // speeds up 5x if distance is less than 10 inches
 
@@ -214,11 +214,11 @@ public class OdometryControl {
             }
 
             if (differentialError > 0) { //Turning left, right faster
-                rightOffset = (rightOffset + ((rightTravelled - leftTravelled) * P_differential)) / 2.0;
+                rightOffset = (rightOffset + ((leftTravelled - rightTravelled) * P_differential)) / 2.0;
                 leftOffset = 0;
             } else {
                 rightOffset = 0;
-                leftOffset = (leftOffset + ((leftTravelled - rightTravelled) * P_differential)) / 2.0;
+                leftOffset = (leftOffset + ((rightTravelled - leftTravelled) * P_differential)) / 2.0;
             }
 
             telemetryControl.addData("distanceTravelled", (distanceTravelled));
@@ -336,11 +336,11 @@ public class OdometryControl {
             }
 
             if (differentialError > 0) { //Turning left, right faster
-                rightOffset = (rightOffset + ( (rightTravelled - leftTravelled) * P_differential) )/ 2.0;
+                rightOffset = (rightOffset + ( (leftTravelled - rightTravelled) * P_differential) )/ 2.0;
                 leftOffset = 0;
             } else {
                 rightOffset = 0;
-                leftOffset = (leftOffset + ( (leftTravelled - rightTravelled) * P_differential) ) / 2.0;
+                leftOffset = (leftOffset + ( (rightTravelled - leftTravelled) * P_differential) ) / 2.0;
             }
 
             telemetryControl.addData("distanceTravelled", (distanceTravelled));
