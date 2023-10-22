@@ -21,9 +21,10 @@ public class OdometryControl {
     /** We use a proportional gain controller for our odometry, these are just different
      * controller's gain levels.*/
     public static double P_gen_forwardback = 0.02;
-    public static double P_gen_strafe = 0.05;
+    public static double P_gen_strafe = 0.02;
     public static double P_gen_turn = 0.03;
     public static double P_differential = 0.2;
+    public static double P_diff_strafe = 0.0075;
 
     /** These variables store the position at the start of the move.
      * They are necessary to maintain knowledge of where we are on the field. */
@@ -43,10 +44,10 @@ public class OdometryControl {
 
     /**Encoder Definitions*/
     double countsPerRevolution = 8192; // counts per revolution on external encoder
-    public static double deadWheelDiameter = 35.0; // measured in mm
-    public static double deadWheelCircumference = deadWheelDiameter * Math.PI; // still mm
+    public final double deadWheelDiameter = 35.0; // measured in mm
+    public final double deadWheelCircumference = deadWheelDiameter * Math.PI; // still mm
 
-    public static double gearRatio = 1.0; // leave at 1 unless you are gearing your encoder
+    public final double gearRatio = 1.0; // leave at 1 unless you are gearing your encoder
     /*
      * Track Width is the distance between the two sets of wheels (defined by the line of x below).
      *
@@ -66,11 +67,11 @@ public class OdometryControl {
      */
     double trackWidth = 1.0;
     // fullRotation: the amount the wheels travel in a full rotation
-    double fullRotation = trackWidth * Math.PI;
+    final double fullRotation = trackWidth * Math.PI;
     // countsPerRobotRev: the number of encoder counts that are recorded in each complete robot revolution.
-    double countsPerRobotRev = fullRotation * (countsPerRevolution / deadWheelCircumference);
-    double countsPerDegree = countsPerRobotRev / 360;
-    double inchesPerDegree = toInches(countsPerDegree);
+    final double countsPerRobotRev = fullRotation * (countsPerRevolution / deadWheelCircumference);
+    final double countsPerDegree = countsPerRobotRev / 360;
+    final double inchesPerDegree = toInches(countsPerDegree);
 
     TelemetryControl telemetryControl;
 
@@ -428,7 +429,7 @@ public class OdometryControl {
         double error = 0;
         double headingError = 0;
 
-        double rightTravelled, leftTravelled, horizTravelled;
+        double rightTravelled = 0, leftTravelled = 0, horizTravelled = 0;
 
         boolean destinationReached = false;
 
@@ -438,7 +439,8 @@ public class OdometryControl {
         boolean waited = false;
 
         time.reset();
-        while (!destinationReached && time.seconds() < 6 + initialDelay) {
+        while (!destinationReached && time.seconds() < 6 + initialDelay /*||
+                (Math.abs(rightTravelled) > 0.5 && Math.abs(leftTravelled) > 0.5)*/) {
 
             rightTravelled = rightEncoder.getDistance(Encoder.MeasurementUnit.IN) - rightPositionAtStart;
             leftTravelled = -(leftEncoder.getDistance(Encoder.MeasurementUnit.IN) - leftPositionAtStart);
@@ -466,6 +468,8 @@ public class OdometryControl {
             telemetryControl.addData("br", br.getPower());
             telemetryControl.update();
 
+            rightOffset = rightOffset + (leftTravelled * P_diff_strafe);
+            leftOffset = leftOffset + (rightTravelled * P_diff_strafe);
 
             // Calc side powers
             // This isn't terribly useful at the moment due to a lack of offsets. However, it's possible
