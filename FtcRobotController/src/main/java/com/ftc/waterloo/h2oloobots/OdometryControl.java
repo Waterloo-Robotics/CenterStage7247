@@ -90,10 +90,10 @@ public class OdometryControl {
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // use any of the following if motors need reversed
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-//        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-//        br.setDirection(DcMotorSimple.Direction.REVERSE);
+//        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+//        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // The device name should match the device name of the motor it is plugged in to.
         leftEncoder = new Encoder(
@@ -122,8 +122,8 @@ public class OdometryControl {
         );
 
         // if any encoders need reversed, do so here.
-//        leftEncoder.setInverted(true);
-        rightEncoder.setInverted(true);
+        leftEncoder.setInverted(true);
+//        rightEncoder.setInverted(true);
 //        horizEncoder.setInverted(true);
 
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
