@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.ftc.waterloo.h2oloobots.TelemetryControl;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -49,8 +50,9 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: Double Vision", group = "Concept")
-@Disabled
+//@Disabled
 public class ConceptDoubleVision extends LinearOpMode {
+    TelemetryControl telemetryControl;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
@@ -71,37 +73,38 @@ public class ConceptDoubleVision extends LinearOpMode {
     @Override
     public void runOpMode() {
         initDoubleVision();
+        telemetryControl = new TelemetryControl(telemetry);
 
         // This OpMode loops continuously, allowing the user to switch between
         // AprilTag and TensorFlow Object Detection (TFOD) image processors.
         while (!isStopRequested())  {
 
             if (opModeInInit()) {
-                telemetry.addData("DS preview on/off","3 dots, Camera Stream");
-                telemetry.addLine();
-                telemetry.addLine("----------------------------------------");
+                telemetryControl.addData("DS preview on/off","3 dots, Camera Stream");
+                telemetryControl.addLine("");
+                telemetryControl.addLine("----------------------------------------");
             }
 
             if (myVisionPortal.getProcessorEnabled(aprilTag)) {
                 // User instructions: Dpad left or Dpad right.
-                telemetry.addLine("Dpad Left to disable AprilTag");
-                telemetry.addLine();
+                telemetryControl.addLine("Dpad Left to disable AprilTag");
+                telemetryControl.addLine("");
                 telemetryAprilTag();
             } else {
-                telemetry.addLine("Dpad Right to enable AprilTag");
+                telemetryControl.addLine("Dpad Right to enable AprilTag");
             }
-            telemetry.addLine();
-            telemetry.addLine("----------------------------------------");
+            telemetryControl.addLine("");
+            telemetryControl.addLine("----------------------------------------");
             if (myVisionPortal.getProcessorEnabled(tfod)) {
-                telemetry.addLine("Dpad Down to disable TFOD");
-                telemetry.addLine();
+                telemetryControl.addLine("Dpad Down to disable TFOD");
+                telemetryControl.addLine("");
                 telemetryTfod();
             } else {
-                telemetry.addLine("Dpad Up to enable TFOD");
+                telemetryControl.addLine("Dpad Up to enable TFOD");
             }
 
-            // Push telemetry to the Driver Station.
-            telemetry.update();
+            // Push telemetryControl to the Driver Station.
+            telemetryControl.update();
 
             if (gamepad1.dpad_left) {
                 myVisionPortal.setProcessorEnabled(aprilTag, false);
@@ -157,45 +160,45 @@ public class ConceptDoubleVision extends LinearOpMode {
     }   // end initDoubleVision()
 
     /**
-     * Function to add telemetry about AprilTag detections.
+     * Function to add telemetryControl about AprilTag detections.
      */
     private void telemetryAprilTag() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+        telemetryControl.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                telemetryControl.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetryControl.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetryControl.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetryControl.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                telemetryControl.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetryControl.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
         }   // end for() loop
 
-    }   // end method telemetryAprilTag()
+    }   // end method telemetryControlAprilTag()
 
     /**
-     * Function to add telemetry about TensorFlow Object Detection (TFOD) recognitions.
+     * Function to add telemetryControl about TensorFlow Object Detection (TFOD) recognitions.
      */
     private void telemetryTfod() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        telemetry.addData("# Objects Detected", currentRecognitions.size());
+        telemetryControl.addData("# Objects Detected", currentRecognitions.size());
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            telemetry.addData(""," ");
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            telemetryControl.addData(""," ");
+            telemetryControl.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetryControl.addData("- Position", "%.0f / %.0f", x, y);
+            telemetryControl.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
         }   // end for() loop
 
-    }   // end method telemetryTfod()
+    }   // end method telemetryControlTfod()
 
 }   // end class
