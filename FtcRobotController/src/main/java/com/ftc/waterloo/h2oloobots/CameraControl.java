@@ -1,5 +1,7 @@
 package com.ftc.waterloo.h2oloobots;
 
+import android.annotation.SuppressLint;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
