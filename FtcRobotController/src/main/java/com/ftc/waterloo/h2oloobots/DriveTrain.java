@@ -239,6 +239,11 @@ public class DriveTrain {
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
+<<<<<<< Updated upstream
+=======
+//        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+//        br.setDirection(DcMotorSimple.Direction.REVERSE);
+>>>>>>> Stashed changes
 
     }
 
@@ -322,9 +327,9 @@ public class DriveTrain {
     public void MecanumTeleOp(double FBInput, double LRInput, double PivotInput) {
 
         fr.setPower((-FBInput - LRInput - (PivotInput)));
-        br.setPower((-FBInput + LRInput - (PivotInput)));
+        br.setPower((FBInput + LRInput - (PivotInput)));
         fl.setPower((-FBInput + LRInput + (PivotInput)));
-        bl.setPower((-FBInput - LRInput + (PivotInput)));
+        bl.setPower((FBInput - LRInput + (PivotInput)));
 
         telemetryControl.motorTelemetryUpdate(
                 fl.getPower(),
