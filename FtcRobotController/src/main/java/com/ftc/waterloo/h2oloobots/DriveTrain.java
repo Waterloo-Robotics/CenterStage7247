@@ -2,7 +2,6 @@ package com.ftc.waterloo.h2oloobots;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,7 +10,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Config
 public class DriveTrain {
 
 
@@ -48,10 +46,10 @@ public class DriveTrain {
 
     /* counts per revolution of the drive motors. None of this is necessary if you aren't using
      * the encoder drive in this file. */
-    double countsPerRevolution = 751.8;
+    double countsPerRevolution = 553;
 
     // diameter of your drive wheels
-    double wheelDiameter = 100 / 25.4; // inches
+    double wheelDiameter = 96 / 25.4; // inches
     double wheelCircumference = wheelDiameter * Math.PI;
 
     /*
@@ -71,13 +69,13 @@ public class DriveTrain {
      *  |                    |
      *  O--------------------O
      */
-    public static double trackWidth = 18.25;
+    double trackWidth = 1.0;
     // how many inches the wheels travel in a full rotation of the robot
-    final double fullRotation = trackWidth * Math.PI;
+    double fullRotation = trackWidth * Math.PI;
 
     // calculates how many encoder counts are in an inch and in a degree
-    final double COUNTS_PER_INCH = countsPerRevolution / wheelCircumference;
-    final double COUNTS_PER_DEGREE = fullRotation / wheelCircumference * countsPerRevolution / 360.0;
+    double COUNTS_PER_INCH = countsPerRevolution / wheelCircumference;
+    double COUNTS_PER_DEGREE = fullRotation / wheelCircumference * countsPerRevolution / 360.0;
 
     // defines local HardwareMap and TelemetryControl variables.
     HardwareMap hardwareMap;
@@ -221,10 +219,13 @@ public class DriveTrain {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-//        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+<<<<<<< Updated upstream
+=======
+//        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+//        br.setDirection(DcMotorSimple.Direction.REVERSE);
+>>>>>>> Stashed changes
 
     }
 
@@ -308,9 +309,9 @@ public class DriveTrain {
     public void MecanumTeleOp(double FBInput, double LRInput, double PivotInput) {
 
         fr.setPower((-FBInput - LRInput - (PivotInput)));
-        br.setPower((-FBInput + LRInput - (PivotInput)));
+        br.setPower((FBInput + LRInput - (PivotInput)));
         fl.setPower((-FBInput + LRInput + (PivotInput)));
-        bl.setPower((-FBInput - LRInput + (PivotInput)));
+        bl.setPower((FBInput - LRInput + (PivotInput)));
 
         telemetryControl.motorTelemetryUpdate(
                 fl.getPower(),
