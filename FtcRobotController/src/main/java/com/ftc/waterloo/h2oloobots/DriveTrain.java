@@ -166,14 +166,7 @@ public class DriveTrain {
     /**Initialization for two motor drivebase (one left, one right).*/
     void TwoWheelInit() {
 
-        left = hardwareMap.dcMotor.get("left");
-        right = hardwareMap.dcMotor.get("right");
-
-        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.TwoWheelInit(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -232,6 +225,9 @@ public class DriveTrain {
 //        bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fr.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.REVERSE);
+
+//        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+//        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -315,9 +311,9 @@ public class DriveTrain {
     public void MecanumTeleOp(double FBInput, double LRInput, double PivotInput) {
 
         fr.setPower((-FBInput - LRInput - (PivotInput)));
-        br.setPower((-FBInput + LRInput - (PivotInput)));
+        br.setPower((FBInput + LRInput - (PivotInput)));
         fl.setPower((-FBInput + LRInput + (PivotInput)));
-        bl.setPower((-FBInput - LRInput + (PivotInput)));
+        bl.setPower((FBInput - LRInput + (PivotInput)));
 
         telemetryControl.motorTelemetryUpdate(
                 fl.getPower(),
@@ -874,6 +870,15 @@ public class DriveTrain {
         while (waitTimer.seconds() <= 0.125) {
 
         }
+
+    }
+
+    public void driveEncoderRawTelemetry() {
+
+        telemetryControl.addData("Front Left Position", fl.getCurrentPosition());
+        telemetryControl.addData("Front Right Position", fr.getCurrentPosition());
+        telemetryControl.addData("Back Left Position", bl.getCurrentPosition());
+        telemetryControl.addData("Back Right Position", br.getCurrentPosition());
 
     }
 
