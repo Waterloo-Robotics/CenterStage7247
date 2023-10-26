@@ -221,11 +221,9 @@ public class DriveTrain {
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
-<<<<<<< Updated upstream
-=======
+
 //        fr.setDirection(DcMotorSimple.Direction.REVERSE);
 //        br.setDirection(DcMotorSimple.Direction.REVERSE);
->>>>>>> Stashed changes
 
     }
 
