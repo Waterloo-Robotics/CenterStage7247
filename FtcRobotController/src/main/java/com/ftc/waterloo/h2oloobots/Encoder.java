@@ -47,8 +47,8 @@ public class Encoder {
                    double gearRatio) {
 
         this.encoder = (DcMotorEx) hardwareMap.dcMotor.get(deviceName);
-        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.countsPerRevolution = countsPerRevolution;
         this.wheelDiameter = wheelDiameter;
