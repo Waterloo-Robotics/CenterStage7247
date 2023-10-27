@@ -48,10 +48,10 @@ public class DriveTrain {
 
     /* counts per revolution of the drive motors. None of this is necessary if you aren't using
      * the encoder drive in this file. */
-    double countsPerRevolution = 751.8;
+    double countsPerRevolution = 384.5;
 
     // diameter of your drive wheels
-    double wheelDiameter = 100 / 25.4; // inches
+    double wheelDiameter = 96 / 25.4; // inches
     double wheelCircumference = wheelDiameter * Math.PI;
 
     /*
@@ -221,11 +221,8 @@ public class DriveTrain {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-//        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 //        fr.setDirection(DcMotorSimple.Direction.REVERSE);
 //        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -344,44 +341,6 @@ public class DriveTrain {
 
     }
 
-    /**Simple Autonomous code to drive at set powers for a set time.
-     * @param leftPower The power to be set to the left motor.
-     * @param rightPower The power to be set to the right motor.
-     * @param SECONDS The time for the movement to occur over.*/
-    public void timeAutoDrive(double leftPower, double rightPower, double SECONDS) {
-
-        if (this.driveTrainType != DriveTrainType.TWO_WHEEL_DRIVE) {
-
-            RobotLog.setGlobalErrorMsg("You must use four power arguments for a 4 wheel drive.");
-
-        } else {
-
-            this.timeAutoTwoWheelDrive(rightPower, leftPower, SECONDS);
-
-        }
-
-    }
-
-    /**Simple Autonomous code to drive in a set direction for a set time.
-     * @param driveDirection The direction for the robot to move.
-     * @param SECONDS The time for the movement to occur over.*/
-    public void timeAutoDrive(DriveDirection driveDirection, double power, double SECONDS) {
-
-        switch (this.driveTrainType) {
-
-            case TWO_WHEEL_DRIVE:
-                this.timeAutoTwoWheelDrive(driveDirection, power, SECONDS);
-                break;
-
-            case MECANUM:
-            case FOUR_WHEEL_TANK:
-                this.timeAutoFourWheelDrive(driveDirection, power, SECONDS);
-                break;
-
-        }
-
-    }
-
     /**Simple Four Wheel Drive Autonomous code to drive at set powers for a set time.
      * @param FRPower The power to be set to the front right motor.
      * @param FLPower The power to be set to the front left motor.
@@ -407,278 +366,6 @@ public class DriveTrain {
         fl.setPower(0);
         br.setPower(0);
         bl.setPower(0);
-
-    }
-
-    /**Simple Four Wheel Drive Autonomous code to drive in a set direction for a set time.
-     * @param driveDirection The direction for the robot to move.
-     * @param SECONDS The time for the movement to occur over.*/
-    public void timeAutoFourWheelDrive(DriveDirection driveDirection, double power, double SECONDS) {
-
-        double frPower = power;
-        double flPower = power;
-        double brPower = power;
-        double blPower = power;
-
-        switch (driveDirection) {
-
-            case FORWARD:
-                frPower *= -1;
-                flPower *= -1;
-                brPower *= -1;
-                blPower *= -1;
-                break;
-
-            case BACKWARD:
-                frPower *= 1;
-                flPower *= 1;
-                brPower *= 1;
-                blPower *= 1;
-                break;
-
-            case STRAFE_LEFT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    frPower *= -1;
-                    flPower *= 1;
-                    brPower *= 1;
-                    blPower *= -1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case STRAFE_RIGHT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    frPower *= 1;
-                    flPower *= -1;
-                    brPower *= -1;
-                    blPower *= 1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case TURN_CLOCKWISE:
-                frPower *= -1;
-                flPower *= 1;
-                brPower *= -1;
-                blPower *= 1;
-                break;
-
-            case TURN_COUNTERCLOCKWISE:
-                frPower *= 1;
-                flPower *= -1;
-                brPower *= 1;
-                blPower *= -1;
-                break;
-
-            case DIAGONAL_FORWARD_LEFT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    frPower *= 1;
-                    flPower *= 0;
-                    brPower *= 0;
-                    blPower *= 1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case DIAGONAL_FORWARD_RIGHT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    frPower *= 0;
-                    flPower *= 1;
-                    brPower *= 1;
-                    blPower *= 0;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case DIAGONAL_BACKWARD_LEFT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    frPower *= -1;
-                    flPower *= 0;
-                    brPower *= 0;
-                    blPower *= -1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case DIAGONAL_BACKWARD_RIGHT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    frPower *= 0;
-                    flPower *= -1;
-                    brPower *= -1;
-                    blPower *= 0;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-        }
-
-        this.timeAutoFourWheelDrive(frPower, flPower, brPower, blPower, SECONDS);
-
-    }
-
-    /**Simple Four Wheel Drive Autonomous code to drive at set powers for a set time.
-     * @param rightPower The power to be set to the front right motor.
-     * @param leftPower The power to be set to the front left motor.
-     * @param SECONDS The time for the movement to occur over.*/
-    public void timeAutoTwoWheelDrive(double rightPower, double leftPower, double SECONDS) {
-
-        ElapsedTime time = new ElapsedTime();
-
-        time.reset();
-
-        while (time.seconds() < SECONDS) {
-
-            right.setPower(rightPower);
-            left.setPower(leftPower);
-
-        }
-
-        right.setPower(0);
-        left.setPower(0);
-
-    }
-
-    /**Simple Four Wheel Drive Autonomous code to drive in a set direction for a set time.
-     * @param driveDirection The direction for the robot to move.
-     * @param SECONDS The time for the movement to occur over.*/
-    public void timeAutoTwoWheelDrive(DriveDirection driveDirection, double power, double SECONDS) {
-
-        double rightPower = power;
-        double leftPower = power;
-
-        switch (driveDirection) {
-
-            case FORWARD:
-                rightPower *= -1;
-                leftPower *= -1;
-                break;
-
-            case BACKWARD:
-                rightPower *= 1;
-                leftPower *= 1;
-                break;
-
-            case STRAFE_LEFT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    rightPower *= -1;
-                    leftPower *= 1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case STRAFE_RIGHT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    rightPower *= 1;
-                    leftPower *= -1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case TURN_CLOCKWISE:
-                rightPower *= -1;
-                leftPower *= 1;
-                break;
-
-            case TURN_COUNTERCLOCKWISE:
-                rightPower *= 1;
-                leftPower *= -1;
-                break;
-
-            case DIAGONAL_FORWARD_LEFT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    rightPower *= 1;
-                    leftPower *= 0;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case DIAGONAL_FORWARD_RIGHT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    rightPower *= 0;
-                    leftPower *= 1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case DIAGONAL_BACKWARD_LEFT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    rightPower *= -1;
-                    leftPower *= 0;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-            case DIAGONAL_BACKWARD_RIGHT:
-                if (this.driveTrainType == DriveTrainType.MECANUM) {
-
-                    rightPower *= 0;
-                    leftPower *= -1;
-
-                } else {
-
-                    RobotLog.setGlobalErrorMsg("This only works on a mecanum drivebase.");
-
-                }
-                break;
-
-        }
-
-        this.timeAutoTwoWheelDrive(rightPower, leftPower, SECONDS);
 
     }
 
@@ -708,11 +395,11 @@ public class DriveTrain {
                 + (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int flTargetPosition = fl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
                 + (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int blTargetPosition = bl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
                 - (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
 
@@ -728,13 +415,23 @@ public class DriveTrain {
 
         timer.reset();
 
-        fr.setPower(SPEED);
-        br.setPower(SPEED);
-        fl.setPower(SPEED);
-        bl.setPower(SPEED);
+        while ((fr.isBusy() ||
+                br.isBusy() ||
+                fl.isBusy() ||
+                bl.isBusy()) &&
+                timer.seconds() <= time) {
 
-        while ((fr.isBusy() || br.isBusy() || fl.isBusy() || bl.isBusy()) && timer.seconds() <= time) {
+            fr.setPower(SPEED);
+            br.setPower(SPEED);
+            fl.setPower(SPEED);
+            bl.setPower(SPEED);
 
+            this.driveEncoderRawTelemetry();
+            telemetryControl.addData("Front Left Target Position", fl.getTargetPosition());
+            telemetryControl.addData("Front Right Target Position", fr.getTargetPosition());
+            telemetryControl.addData("Back Left Target Position", bl.getTargetPosition());
+            telemetryControl.addData("Back Right Target Position", br.getTargetPosition());
+            telemetryControl.update();
         }
 
         fr.setPower(0);
@@ -749,127 +446,7 @@ public class DriveTrain {
 
         ElapsedTime waitTimer = new ElapsedTime();
         waitTimer.reset();
-        while (waitTimer.seconds() <= 0.125) {
-
-        }
-
-    }
-
-    /**Four Wheel Autonomous for a Four Wheel Tank Drivetrain using inches and degrees
-     * @param INCHES_FB The inches forwards/backwards to drive (positive is forwards,
-     *        negative is backwards)
-     * @param DEGREES_TURN The degrees to turn (positive is clockwise,
-     *        negative is counterclockwise)*/
-    public void EncoderAutoFourWheelTankDrive(double INCHES_FB, double DEGREES_TURN, double SPEED, int time) {
-
-        ElapsedTime timer = new ElapsedTime();
-
-        if (DEGREES_TURN > 180) {
-
-            DEGREES_TURN -= 360;
-
-        }
-
-        int frTargetPosition = fr.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
-        int brTargetPosition = br.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
-        int flTargetPosition = fl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
-        int blTargetPosition = bl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
-
-        fr.setTargetPosition(frTargetPosition);
-        br.setTargetPosition(brTargetPosition);
-        fl.setTargetPosition(flTargetPosition);
-        bl.setTargetPosition(blTargetPosition);
-
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        timer.reset();
-
-        fr.setPower(SPEED);
-        br.setPower(SPEED);
-        fl.setPower(SPEED);
-        bl.setPower(SPEED);
-
-        while ((fr.isBusy() || br.isBusy() || fl.isBusy() || bl.isBusy()) && timer.seconds() <= time) {
-
-        }
-
-        fr.setPower(0);
-        br.setPower(0);
-        fl.setPower(0);
-        bl.setPower(0);
-
-        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        ElapsedTime waitTimer = new ElapsedTime();
-        waitTimer.reset();
-        while (waitTimer.seconds() <= 0.125) {
-
-        }
-
-    }
-
-    /**Four Wheel Autonomous for a Two Wheel Drivetrain using inches and degrees
-     * @param INCHES_FB The inches forwards/backwards to drive (positive is forwards,
-     *        negative is backwards)
-     * @param DEGREES_TURN The degrees to turn (positive is clockwise,
-     *        negative is counterclockwise)*/
-    public void EncoderAutoTwoWheelDrive(double INCHES_FB, double DEGREES_TURN, double SPEED, int time) {
-
-        ElapsedTime timer = new ElapsedTime();
-
-        if (DEGREES_TURN > 180) {
-
-            DEGREES_TURN -= 360;
-
-        }
-
-        int rightTargetPosition = fr.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
-        int leftTargetPosition = fl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
-
-        right.setTargetPosition(rightTargetPosition);
-        left.setTargetPosition(leftTargetPosition);
-
-        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        timer.reset();
-
-        right.setPower(SPEED);
-        left.setPower(SPEED);
-
-        while ((left.isBusy() || right.isBusy()) && timer.seconds() <= time) {
-
-        }
-
-        right.setPower(0);
-        left.setPower(0);
-
-        right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        ElapsedTime waitTimer = new ElapsedTime();
-        waitTimer.reset();
-        while (waitTimer.seconds() <= 0.125) {
-
-        }
+        while (waitTimer.seconds() <= 0.5);
 
     }
 
