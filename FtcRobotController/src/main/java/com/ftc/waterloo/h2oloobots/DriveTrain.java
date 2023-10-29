@@ -71,7 +71,7 @@ public class DriveTrain {
      *  |                    |
      *  O--------------------O
      */
-    public static double trackWidth = 18.25;
+    public static double trackWidth = 28.75;
     // how many inches the wheels travel in a full rotation of the robot
     final double fullRotation = trackWidth * Math.PI;
 
@@ -120,10 +120,6 @@ public class DriveTrain {
 
         switch (driveTrainType) {
 
-            case TWO_WHEEL_DRIVE:
-                this.TwoWheelInit();
-                break;
-
             case FOUR_WHEEL_TANK:
             case MECANUM:
                 this.FourMotorInit();
@@ -146,10 +142,6 @@ public class DriveTrain {
 
         switch (driveTrainType) {
 
-            case TWO_WHEEL_DRIVE:
-                this.TwoWheelInit(zeroPowerBehavior);
-                break;
-
             case FOUR_WHEEL_TANK:
             case MECANUM:
                 this.FourMotorInit(zeroPowerBehavior);
@@ -160,31 +152,6 @@ public class DriveTrain {
                 break;
 
         }
-
-    }
-
-    /**Initialization for two motor drivebase (one left, one right).*/
-    void TwoWheelInit() {
-
-        this.TwoWheelInit(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    }
-
-    /**Initialization for two motor drivebase (one left, one right).
-     * @param zeroPowerBehavior the zero power behavior to set to the drive motors.*/
-    void TwoWheelInit(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-
-        left = hardwareMap.dcMotor.get("left");
-        right = hardwareMap.dcMotor.get("right");
-
-        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        left.setZeroPowerBehavior(zeroPowerBehavior);
-        right.setZeroPowerBehavior(zeroPowerBehavior);
 
     }
 
@@ -228,33 +195,6 @@ public class DriveTrain {
 
     }
 
-    /**TeleOp code for a 4 wheel tank or two wheel drive.
-     * @param FBInput forward and back input, range -1 to 1
-     * @param pivotInput pivot input, range -1 to 1*/
-    public void teleOpDrive(double FBInput, double pivotInput) {
-
-        switch (driveTrainType) {
-
-            case TWO_WHEEL_DRIVE:
-                this.TwoWheelDriveTeleOp(FBInput, pivotInput);
-                telemetryControl.motorTelemetryUpdate(left.getPower(), right.getPower());
-                break;
-
-            case FOUR_WHEEL_TANK:
-                this.FWDTeleOp(FBInput, pivotInput);
-                telemetryControl.motorTelemetryUpdate(fl.getPower(), fr.getPower(), bl.getPower(), br.getPower());
-                break;
-
-            case MECANUM:
-                RobotLog.setGlobalErrorMsg("Passing in a LRInput is necessary. Please use the " +
-                        "version of this function that uses 'teleOpDrive(FBInput, LRInput," +
-                        " pivotInput)'.");
-                break;
-
-        }
-
-    }
-
     /**TeleOp code for a mecanum drive.
      * @param FBInput forward and back input, range -1 to 1
      * @param LRInput left and right strafing input, range -1 to 1
@@ -279,28 +219,6 @@ public class DriveTrain {
 
     }
 
-    /**Simple two wheel drive TeleOp.
-     * @param FBInput input used for forward and back movements.
-     * @param PivotInput input used for turning.*/
-    public void TwoWheelDriveTeleOp(double FBInput, double PivotInput) {
-
-        right.setPower(-FBInput - PivotInput);
-        left.setPower(-FBInput + PivotInput);
-
-    }
-
-    /**Simple four wheel tank drive TeleOp.
-     * @param FBInput input used for forward and back movements.
-     * @param PivotInput input used for turning.*/
-    public void FWDTeleOp(double FBInput, double PivotInput) {
-
-        fr.setPower(-FBInput - PivotInput);
-        fl.setPower(-FBInput + PivotInput);
-        br.setPower(-FBInput - PivotInput);
-        bl.setPower(-FBInput + PivotInput);
-
-    }
-
     /**Simple Mecanum drive TeleOp.
      * @param FBInput input used for forward and back movements.
      * @param LRInput input used for strafing left and right.
@@ -308,9 +226,9 @@ public class DriveTrain {
     public void MecanumTeleOp(double FBInput, double LRInput, double PivotInput) {
 
         fr.setPower((-FBInput - LRInput - (PivotInput)));
-        br.setPower((FBInput + LRInput - (PivotInput)));
+        br.setPower((-FBInput + LRInput - (PivotInput)));
         fl.setPower((-FBInput + LRInput + (PivotInput)));
-        bl.setPower((FBInput - LRInput + (PivotInput)));
+        bl.setPower((-FBInput - LRInput + (PivotInput)));
 
         telemetryControl.motorTelemetryUpdate(
                 fl.getPower(),
@@ -395,11 +313,11 @@ public class DriveTrain {
                 + (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int flTargetPosition = fl.getCurrentPosition()
-                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
                 + (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int blTargetPosition = bl.getCurrentPosition()
-                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
                 - (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
 
@@ -409,9 +327,9 @@ public class DriveTrain {
         bl.setTargetPosition(blTargetPosition);
 
         fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         timer.reset();
 
@@ -426,12 +344,6 @@ public class DriveTrain {
             fl.setPower(SPEED);
             bl.setPower(SPEED);
 
-            this.driveEncoderRawTelemetry();
-            telemetryControl.addData("Front Left Target Position", fl.getTargetPosition());
-            telemetryControl.addData("Front Right Target Position", fr.getTargetPosition());
-            telemetryControl.addData("Back Left Target Position", bl.getTargetPosition());
-            telemetryControl.addData("Back Right Target Position", br.getTargetPosition());
-            telemetryControl.update();
         }
 
         fr.setPower(0);
@@ -439,10 +351,10 @@ public class DriveTrain {
         fl.setPower(0);
         bl.setPower(0);
 
-        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ElapsedTime waitTimer = new ElapsedTime();
         waitTimer.reset();

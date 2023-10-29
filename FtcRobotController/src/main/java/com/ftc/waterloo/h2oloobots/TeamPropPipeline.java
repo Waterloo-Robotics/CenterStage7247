@@ -33,7 +33,7 @@ public class TeamPropPipeline extends OpenCvPipeline {
     // Pink, the default color                         Y      Cr     Cb    (Do not change Y)
 //    public static Scalar scalarLowerYCrCb = new Scalar(132, 16, 146);
 //    public static Scalar scalarUpperYCrCb = new Scalar(210, 61, 203);
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 150.0, 40.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 180.0, 40.0);
     public static Scalar scalarUpperYCrCb = new Scalar(255.0, 250.0, 110.0);
 
     // These values define the Range of color, for example green is a color "in between" lightgreen and darkgreen.

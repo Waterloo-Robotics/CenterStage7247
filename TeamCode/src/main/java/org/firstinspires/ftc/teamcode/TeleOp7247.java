@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.ftc.waterloo.h2oloobots.DriveTrain;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "7247 Tele", group = "!")
-public class H20_Loo extends H2OLooTeleOp {
+@TeleOp(name = "7247 TeleOp", group = "!")
+public class TeleOp7247 extends H2OLooTeleOp {
 
     @Override
     public void opModeInit() {
