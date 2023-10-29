@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**This AttachmentControl class just offers a global area to store any non-drivebase commands and
  * devices to be used as chosen. Most imports should be added already, but if you need other
@@ -81,6 +82,20 @@ public class AttachmentControl {
         } else {
 
             lastLeftBumper = false;
+
+        }
+
+    }
+
+    public void intakeAuto() {
+
+        ElapsedTime time = new ElapsedTime();
+
+        time.reset();
+        while (time.seconds() < 5) {
+
+            intakeMotor.setPower(-1);
+            rollerCRServo.setPower(1);
 
         }
 

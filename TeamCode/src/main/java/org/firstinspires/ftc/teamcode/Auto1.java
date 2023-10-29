@@ -15,11 +15,11 @@ public class Auto1 extends H2OLooAuto {
 
     public void opModePeriodic() {
 
-        driveTrain.EncoderAutoMecanumDrive(10, 0, 0, 0.75, 3);
-//        sleep(500);
-//        driveTrain.EncoderAutoMecanumDrive(0, 0, -90, 0.75, 5);
-//        sleep(500);
-//        driveTrain.EncoderAutoMecanumDrive(72, 0, 0, 0.75, 8);
+        driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 3);
+        driveTrain.EncoderAutoMecanumDrive(0, 0, -90, 0.75, 5);
+        driveTrain.EncoderAutoMecanumDrive(84, 0, 0, 0.75, 8);
+
+        attachmentControl.intakeAuto();
 
 //        odometryControl.strafeLeft(24, 0.5);
 
