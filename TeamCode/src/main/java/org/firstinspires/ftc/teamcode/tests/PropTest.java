@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
-import com.ftc.waterloo.h2oloobots.AprilTagDetectionPipeline;
+import com.ftc.waterloo.h2oloobots.BlueTeamPropPipeline;
+import com.ftc.waterloo.h2oloobots.RedTeamPropPipeline;
 import com.ftc.waterloo.h2oloobots.DriveTrain;
-import com.ftc.waterloo.h2oloobots.TeamPropPipeline;
+import com.ftc.waterloo.h2oloobots.RedTeamPropPipeline;
 import com.ftc.waterloo.h2oloobots.TelemetryControl;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class PropTest extends LinearOpMode {
 
     OpenCvCamera camera;
-    TeamPropPipeline pipeline;
+    BlueTeamPropPipeline pipeline;
     TelemetryControl telemetryControl;
     DriveTrain driveTrain;
 
@@ -27,7 +28,7 @@ public class PropTest extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new TeamPropPipeline();
+        pipeline = new BlueTeamPropPipeline();
 
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -51,7 +52,7 @@ public class PropTest extends LinearOpMode {
 
             telemetryControl.startCameraStream(camera, 60);
 
-            telemetryControl.addData("Analysis", TeamPropPipeline.propPosition);
+            telemetryControl.addData("Analysis", RedTeamPropPipeline.propPosition);
             telemetryControl.update();
 
             driveTrain.teleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);

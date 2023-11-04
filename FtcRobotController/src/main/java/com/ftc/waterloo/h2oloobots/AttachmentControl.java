@@ -26,6 +26,9 @@ public class AttachmentControl {
     DcMotor intakeMotor;
     boolean lastRightBumper = false;
     boolean lastLeftBumper = false;
+    DcMotor hangMotor;
+    Servo hangServo;
+    boolean isGP2APressed = false;
 
     public AttachmentControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, Gamepad gamepad1, Gamepad gamepad2) {
 
@@ -36,6 +39,57 @@ public class AttachmentControl {
         droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+
+        hangMotor = hardwareMap.dcMotor.get("hangMotor");
+        hangServo = hardwareMap.servo.get("hangServo");
+
+    }
+
+    public void hangMotorManual() {
+
+        hangMotor.setPower(gamepad2.left_stick_y);
+
+    }
+
+    public void hangServoManual() {
+
+        if (gamepad2.a) {
+            hangServo.setPosition(hangServo.getPosition() + 0.005);
+        } else if (gamepad2.b) {
+            hangServo.setPosition(hangServo.getPosition() - 0.005);
+        }
+
+        telemetryControl.addData("Hang Servo Position", hangServo.getPosition());
+
+
+    }
+
+    public void hangServoTeleOp() {
+
+        if (gamepad2.a) {
+
+            if (!isGP2APressed) {
+
+                if (hangServo.getPosition() < 0.05) {
+
+                    hangServo.setPosition(0.5);
+
+                } else {
+
+                    hangServo.setPosition(0);
+
+                }
+
+
+            }
+
+            isGP2APressed = true;
+
+        } else {
+
+            isGP2APressed = false;
+
+        }
 
     }
 
@@ -89,21 +143,14 @@ public class AttachmentControl {
 
     public void intakeAuto() {
 
-        ElapsedTime time = new ElapsedTime();
-
-        time.reset();
-        while (time.seconds() < 5) {
-
-            intakeMotor.setPower(-1);
-            rollerCRServo.setPower(1);
-
-        }
+        intakeMotor.setPower(-1);
+        rollerCRServo.setPower(1);
 
     }
 
     public void droneTeleOp() {
 
-        if (gamepad1.a) {
+        if (gamepad2.y) {
 
             droneServo.setPosition(0.5);
 
