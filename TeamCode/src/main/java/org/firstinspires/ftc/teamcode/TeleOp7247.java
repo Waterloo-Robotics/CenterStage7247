@@ -25,6 +25,8 @@ public class TeleOp7247 extends H2OLooTeleOp {
 
         attachmentControl.droneTeleOp();
         attachmentControl.intakeTeleOp();
+        attachmentControl.hangMotorManual();
+        attachmentControl.hangServoTeleOp();
     }
 
 }

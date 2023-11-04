@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.ftc.waterloo.h2oloobots.DriveTrain;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
@@ -14,15 +14,18 @@ public class AttachmentTest extends H2OLooTeleOp {
     @Override
     public void opModePeriodic() {
 
-            driveTrain.teleOpDrive(
-                    gamepad1.left_stick_y,
-                    gamepad1.left_stick_x,
-                    gamepad1.right_stick_x
-            );
+        driveTrain.teleOpDrive(
+                gamepad1.left_stick_y,
+                gamepad1.left_stick_x,
+                gamepad1.right_stick_x
+        );
 
-            attachmentControl.liftTeleOp();
+//            attachmentControl.liftTeleOp();
 
-            telemetryControl.update();
+        attachmentControl.hangServoManual();
+        attachmentControl.hangMotorManual();
+
+        telemetryControl.update();
 
     }
 

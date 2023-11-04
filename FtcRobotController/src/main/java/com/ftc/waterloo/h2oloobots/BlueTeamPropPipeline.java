@@ -2,21 +2,21 @@ package com.ftc.waterloo.h2oloobots;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Size;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamPropPipeline extends OpenCvPipeline {
+public class BlueTeamPropPipeline extends OpenCvPipeline {
 
-    Scalar HOT_PINK = new Scalar(81, 240, 90);
+    Scalar HOT_PINK = new Scalar(41, 110, 240);
 
     public enum PropPosition {
 
@@ -33,8 +33,8 @@ public class TeamPropPipeline extends OpenCvPipeline {
     // Pink, the default color                         Y      Cr     Cb    (Do not change Y)
 //    public static Scalar scalarLowerYCrCb = new Scalar(132, 16, 146);
 //    public static Scalar scalarUpperYCrCb = new Scalar(210, 61, 203);
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 180.0, 40.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 250.0, 110.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 120.0, 140.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(150.0, 170.0, 255.0);
 
     // These values define the Range of color, for example green is a color "in between" lightgreen and darkgreen.
 
@@ -151,7 +151,7 @@ public class TeamPropPipeline extends OpenCvPipeline {
             if (getRectArea() > rectArea) {
                 if (getRectMidpointX() > 350) {
 
-                    propPosition = PropPosition.Left;
+                    propPosition = PropPosition.Right;
 
                 } else if (getRectMidpointX() > 220) {
 
@@ -159,7 +159,7 @@ public class TeamPropPipeline extends OpenCvPipeline {
 
                 } else {
 
-                    propPosition = PropPosition.Right;
+                    propPosition = PropPosition.Left;
 
                 }
             }
