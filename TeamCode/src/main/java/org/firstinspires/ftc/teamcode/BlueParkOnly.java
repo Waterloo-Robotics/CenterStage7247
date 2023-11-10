@@ -24,17 +24,6 @@ public class BlueParkOnly extends H2OLooAuto {
         driveTrain.EncoderAutoMecanumDrive(6, 0, 0, 0.75, 1);
         sleep(10000);
 
-//        attachmentControl.intakeAuto();
-
-//        odometryControl.strafeLeft(24, 0.5);
-
-//        while (opModeIsActive()) {
-//
-//            odometryControl.odoTelemetry(Encoder.MeasurementUnit.PULSES);
-//            cameraControl.telemetryAprilTag();
-//            telemetryControl.update();
-//        }
-
     }
 
 }
