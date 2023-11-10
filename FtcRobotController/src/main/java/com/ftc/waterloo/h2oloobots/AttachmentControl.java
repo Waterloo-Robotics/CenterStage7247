@@ -42,21 +42,22 @@ public class AttachmentControl {
 
         hangMotor = hardwareMap.dcMotor.get("hangMotor");
         hangServo = hardwareMap.servo.get("hangServo");
+        hangServo.scaleRange(0.13, 0.53);
 
     }
 
     public void hangMotorManual() {
 
-        hangMotor.setPower(gamepad2.left_stick_y);
+        hangMotor.setPower(-gamepad2.left_stick_y);
 
     }
 
     public void hangServoManual() {
 
         if (gamepad2.a) {
-            hangServo.setPosition(hangServo.getPosition() + 0.005);
+            hangServo.setPosition(hangServo.getPosition() + 0.001);
         } else if (gamepad2.b) {
-            hangServo.setPosition(hangServo.getPosition() - 0.005);
+            hangServo.setPosition(hangServo.getPosition() - 0.001);
         }
 
         telemetryControl.addData("Hang Servo Position", hangServo.getPosition());
@@ -72,7 +73,11 @@ public class AttachmentControl {
 
                 if (hangServo.getPosition() < 0.05) {
 
-                    hangServo.setPosition(0.5);
+                    hangServo.setPosition(0.893);
+
+                } else if (hangServo.getPosition() < 0.95) {
+
+                    hangServo.setPosition(1);
 
                 } else {
 
@@ -97,9 +102,9 @@ public class AttachmentControl {
 
         if (gamepad1.right_bumper) {
 
-            if (!lastRightBumper && intakeMotor.getPower() < 0.85) {
+            if (!lastRightBumper && intakeMotor.getPower() < 0.7) {
 
-                intakeMotor.setPower(1);
+                intakeMotor.setPower(0.75);
                 rollerCRServo.setPower(-1);
 
             } else if (!lastRightBumper) {
