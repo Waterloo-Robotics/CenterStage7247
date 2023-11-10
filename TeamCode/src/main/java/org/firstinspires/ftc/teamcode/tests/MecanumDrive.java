@@ -18,7 +18,7 @@ public class MecanumDrive extends LinearOpMode {
     public void runOpMode() {
 
         telemetryControl = new TelemetryControl(telemetry);
-        driveTrain = new DriveTrain(hardwareMap, telemetryControl);
+        driveTrain = new DriveTrain(hardwareMap, telemetryControl, null);
         driveTrain.setDriveTrainType(DriveTrain.DriveTrainType.MECANUM);
 
         waitForStart();

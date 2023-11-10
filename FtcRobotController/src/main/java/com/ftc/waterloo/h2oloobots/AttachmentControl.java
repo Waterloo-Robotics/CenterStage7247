@@ -41,6 +41,7 @@ public class AttachmentControl {
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
 
         hangMotor = hardwareMap.dcMotor.get("hangMotor");
+        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
         hangServo.scaleRange(0.13, 0.53);
 

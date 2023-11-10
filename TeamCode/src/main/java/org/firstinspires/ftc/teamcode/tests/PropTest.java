@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import com.ftc.waterloo.h2oloobots.AttachmentControl;
 import com.ftc.waterloo.h2oloobots.BlueTeamPropPipeline;
 import com.ftc.waterloo.h2oloobots.RedTeamPropPipeline;
 import com.ftc.waterloo.h2oloobots.DriveTrain;
@@ -20,11 +21,13 @@ public class PropTest extends LinearOpMode {
     BlueTeamPropPipeline pipeline;
     TelemetryControl telemetryControl;
     DriveTrain driveTrain;
+    AttachmentControl attachmentControl;
 
     public void runOpMode() {
 
         telemetryControl = new TelemetryControl(telemetry);
-        driveTrain = new DriveTrain(hardwareMap, telemetryControl);
+        attachmentControl = new AttachmentControl(hardwareMap, telemetryControl, gamepad1, gamepad2);
+        driveTrain = new DriveTrain(hardwareMap, telemetryControl, attachmentControl);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);

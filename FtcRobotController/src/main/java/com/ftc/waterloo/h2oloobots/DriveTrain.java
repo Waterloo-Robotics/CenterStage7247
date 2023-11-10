@@ -82,16 +82,19 @@ public class DriveTrain {
     // defines local HardwareMap and TelemetryControl variables.
     HardwareMap hardwareMap;
     TelemetryControl telemetryControl;
+    AttachmentControl attachmentControl;
 
     /**Initialises the drivetrain variable.
      * @param hardwareMap the local HardwareMap variable from in the runOpMode() void.
      * @param telemetryControl the TelemetryControl variable initialized in the runOpMode() void.*/
     public DriveTrain(HardwareMap hardwareMap,
-                      TelemetryControl telemetryControl
+                      TelemetryControl telemetryControl,
+                      AttachmentControl attachmentControl
     ) {
 
         this.hardwareMap = hardwareMap;
         this.telemetryControl = telemetryControl;
+        this.attachmentControl = attachmentControl;
         this.FourMotorInit();
 
     }
@@ -103,11 +106,13 @@ public class DriveTrain {
     public DriveTrain(
             HardwareMap hardwareMap,
             TelemetryControl telemetryControl,
+            AttachmentControl attachmentControl,
             DcMotor.ZeroPowerBehavior zeroPowerBehavior
     ) {
 
         this.hardwareMap = hardwareMap;
         this.telemetryControl = telemetryControl;
+        this.attachmentControl = attachmentControl;
         this.FourMotorInit(zeroPowerBehavior);
 
     }
@@ -225,10 +230,27 @@ public class DriveTrain {
      * @param PivotInput input used for turning.*/
     public void MecanumTeleOp(double FBInput, double LRInput, double PivotInput) {
 
-        fr.setPower((-FBInput - LRInput - (PivotInput)));
-        br.setPower((-FBInput + LRInput - (PivotInput)));
-        fl.setPower((-FBInput + LRInput + (PivotInput)));
-        bl.setPower((-FBInput - LRInput + (PivotInput)));
+        double speedMul;
+
+        double frPower = -FBInput - LRInput - (PivotInput);
+        double brPower = -FBInput + LRInput - (PivotInput);
+        double flPower = -FBInput + LRInput + (PivotInput);
+        double blPower = -FBInput - LRInput + (PivotInput);
+
+        if (attachmentControl != null && attachmentControl.hangServo.getPosition() > 0.8) {
+
+            speedMul = 0.25;
+
+        } else {
+
+            speedMul = 1;
+
+        }
+
+        fr.setPower(frPower * speedMul);
+        br.setPower(brPower * speedMul);
+        fl.setPower(flPower * speedMul);
+        bl.setPower(blPower * speedMul);
 
         telemetryControl.motorTelemetryUpdate(
                 fl.getPower(),
