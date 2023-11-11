@@ -58,7 +58,7 @@ public class PropTest extends LinearOpMode {
             telemetryControl.addData("Analysis", RedTeamPropPipeline.propPosition);
             telemetryControl.update();
 
-            driveTrain.teleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            driveTrain.teleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, attachmentControl);
 
         }
 
