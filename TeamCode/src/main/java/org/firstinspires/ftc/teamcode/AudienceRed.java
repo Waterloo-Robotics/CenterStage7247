@@ -65,7 +65,7 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(23, 0, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 90, 0.5, 5);
                 driveTrain.EncoderAutoMecanumDrive(93, 0, 0, 0.5, 8);
-                driveTrain.EncoderAutoMecanumDrive(0, 25, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 45, 0.5, 2);
                 attachmentControl.intakeAuto();
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 1);
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 1);
@@ -75,9 +75,9 @@ public class AudienceRed extends H2OLooAuto {
             case RIGHT:
 
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, -27, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, -29, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(82, 0, 0, 0.5, 8);
-                driveTrain.EncoderAutoMecanumDrive(0, 25, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 45, 0.5, 2);
                 attachmentControl.intakeAuto();
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 1);
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 1);

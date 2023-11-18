@@ -38,7 +38,7 @@ public class AudienceBlue extends H2OLooAuto {
             default:
             case CENTER:
 
-                driveTrain.EncoderAutoMecanumDrive(26, 0, 0, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(24, 0, 0, 0.5, 3);
                 break;
 
             case RIGHT:
@@ -63,7 +63,7 @@ public class AudienceBlue extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(22.5, 0, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -88, 0.5, 5);
                 driveTrain.EncoderAutoMecanumDrive(90, 0, 0, 0.5, 8);
-                driveTrain.EncoderAutoMecanumDrive(0, -25, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -45, 0.5, 2);
                 attachmentControl.intakeAuto();
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 1);
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 1);
@@ -75,7 +75,7 @@ public class AudienceBlue extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 3);
                 driveTrain.EncoderAutoMecanumDrive(0, 27, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(82, 0, 0, 0.5, 8);
-                driveTrain.EncoderAutoMecanumDrive(0, -25, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -45, 0.5, 2);
                 attachmentControl.intakeAuto();
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 1);
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 1);
