@@ -5,6 +5,7 @@ import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp(name = "Attachment Test", group = "a")
 public class AttachmentTest extends H2OLooTeleOp {
 

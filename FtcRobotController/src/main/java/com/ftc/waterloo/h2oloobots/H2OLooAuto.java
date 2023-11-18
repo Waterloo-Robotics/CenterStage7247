@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public abstract class H2OLooAuto extends LinearOpMode {
 
+    public CameraControl.Alliance alliance;
     public H2OLooAuto() {}
     public TelemetryControl telemetryControl;
 
@@ -19,7 +20,6 @@ public abstract class H2OLooAuto extends LinearOpMode {
         telemetryControl = new TelemetryControl(telemetry);
 //        odometryControl = new OdometryControl(hardwareMap, telemetryControl);
         attachmentControl = new AttachmentControl(hardwareMap, telemetryControl, gamepad1, gamepad2);
-//        cameraControl = new CameraControl(hardwareMap, telemetryControl);
         driveTrain = new DriveTrain(hardwareMap, telemetryControl, attachmentControl, DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.opModeInit();
@@ -27,6 +27,13 @@ public abstract class H2OLooAuto extends LinearOpMode {
         waitForStart();
 
         this.opModePeriodic();
+
+    }
+
+    public void initCamera(CameraControl.Alliance alliance) {
+
+        this.alliance = alliance;
+        this.cameraControl = new CameraControl(hardwareMap, telemetryControl, this.alliance);
 
     }
 
