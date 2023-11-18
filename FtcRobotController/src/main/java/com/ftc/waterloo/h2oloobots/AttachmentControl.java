@@ -43,7 +43,7 @@ public class AttachmentControl {
         hangMotor = hardwareMap.dcMotor.get("hangMotor");
         hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
-        hangServo.scaleRange(0.13, 0.53);
+        hangServo.scaleRange(0.16, 0.604);
 
     }
 
@@ -74,7 +74,7 @@ public class AttachmentControl {
 
                 if (hangServo.getPosition() < 0.05) {
 
-                    hangServo.setPosition(0.893);
+                    hangServo.setPosition(0.845);
 
                 } else if (hangServo.getPosition() < 0.95) {
 
@@ -151,6 +151,21 @@ public class AttachmentControl {
 
         intakeMotor.setPower(-1);
         rollerCRServo.setPower(1);
+
+    }
+
+    public void purplePixelSpit() {
+
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+
+        while (time.seconds() < 1.25) {
+
+            intakeMotor.setPower(-0.15);
+
+        }
+
+        intakeMotor.setPower(0);
 
     }
 
