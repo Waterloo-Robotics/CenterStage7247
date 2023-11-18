@@ -125,9 +125,9 @@ public class AttachmentControl {
 
         if (gamepad1.left_bumper) {
 
-            if (!lastLeftBumper && intakeMotor.getPower() > -0.85) {
+            if (!lastLeftBumper && intakeMotor.getPower() > -0.3) {
 
-                intakeMotor.setPower(-1);
+                intakeMotor.setPower(-0.35);
                 rollerCRServo.setPower(1);
 
             } else if (!lastLeftBumper) {
@@ -149,7 +149,7 @@ public class AttachmentControl {
 
     public void intakeAuto() {
 
-        intakeMotor.setPower(-1);
+        intakeMotor.setPower(-0.35);
         rollerCRServo.setPower(1);
 
     }

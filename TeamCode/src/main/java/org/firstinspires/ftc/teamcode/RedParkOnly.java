@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.ftc.waterloo.h2oloobots.H2OLooAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous
 public class RedParkOnly extends H2OLooAuto {
 
