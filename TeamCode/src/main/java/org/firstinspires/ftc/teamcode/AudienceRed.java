@@ -32,14 +32,12 @@ public class AudienceRed extends H2OLooAuto {
             case LEFT:
 
                 driveTrain.EncoderAutoMecanumDrive(20, -10, 0, 0.5, 3);
-
                 break;
 
             default:
             case CENTER:
 
                 driveTrain.EncoderAutoMecanumDrive(26, 0, 0, 0.5, 3);
-
                 break;
 
             case RIGHT:
@@ -47,6 +45,7 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(26, 0, 0, 0.5, 3);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 90, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 2);
+                break;
         }
         attachmentControl.purplePixelSpit();
         switch (this.location) {
@@ -54,7 +53,6 @@ public class AudienceRed extends H2OLooAuto {
             case LEFT:
 
                 driveTrain.EncoderAutoMecanumDrive(-5, 0, 0, 0.5, 3);
-
                 break;
 
             default:
@@ -69,7 +67,6 @@ public class AudienceRed extends H2OLooAuto {
                 attachmentControl.intakeAuto();
                 driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 1);
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 1);
-
                 break;
 
             case RIGHT:
@@ -83,8 +80,8 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 1);
                 break;
         }
-        while (opModeIsActive());
 
+        while (opModeIsActive());
 
     }
 }
