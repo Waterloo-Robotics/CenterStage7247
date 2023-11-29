@@ -171,7 +171,7 @@ public class AttachmentControl {
 
     public void droneTeleOp() {
 
-        if (gamepad2.y) {
+        if (gamepad1.a) {
 
             droneServo.setPosition(0.5);
 
