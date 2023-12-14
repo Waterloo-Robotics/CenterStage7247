@@ -38,10 +38,10 @@ public class AttachmentControl {
 
         droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
-        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+//        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
 
-        hangMotor = hardwareMap.dcMotor.get("hangMotor");
-        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        hangMotor = hardwareMap.dcMotor.get("hangMotor");
+//        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
         hangServo.scaleRange(0.16, 0.604);
 

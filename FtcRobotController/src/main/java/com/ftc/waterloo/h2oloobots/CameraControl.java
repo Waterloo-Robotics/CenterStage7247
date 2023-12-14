@@ -3,9 +3,16 @@ package com.ftc.waterloo.h2oloobots;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -30,7 +37,7 @@ public class CameraControl {
     static final int STREAM_HEIGHT = 480; // modify for your camera
     int width = 640;
     int height = 480;
-    OpenCvWebcam webcam;
+    OpenCvWebcam openCvWebcam;
     BluePropPipeline bluePropPipeline;
     RedPropPipeline redPropPipeline;
 
@@ -47,38 +54,61 @@ public class CameraControl {
         RIGHT,
         NONE
     }
+    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
+    final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error. (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.02 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error. (0.25 / 25.0)
+    final double TURN_GAIN   =  0.025  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+    final double MAX_AUTO_SPEED = 0.75;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+
+    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    static int DESIRED_TAG_ID = 5;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private VisionPortal visionPortal;               // Used to manage the video source.
+    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+    double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+    double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+    double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+
+    Gamepad gamepad1, gamepad2;
 
 
 //    private AprilTagProcessor aprilTag;
 
 //    private VisionPortal visionPortal;
 
-    public CameraControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, @NonNull Alliance alliance) {
+    public CameraControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, @NonNull Alliance alliance, Gamepad gamepad1, Gamepad gamepad2) {
 
         this.telemetryControl = telemetryControl;
         this.alliance = alliance;
+        this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); // put your camera's name here
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        openCvWebcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         bluePropPipeline = new BluePropPipeline(width);
         redPropPipeline = new RedPropPipeline(width);
         switch (alliance) {
             case RED:
-                webcam.setPipeline(redPropPipeline);
+                openCvWebcam.setPipeline(redPropPipeline);
             break;
 
             case BLUE:
-                webcam.setPipeline(bluePropPipeline);
+                openCvWebcam.setPipeline(bluePropPipeline);
             break;
         }
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        openCvWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+                openCvWebcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -87,70 +117,19 @@ public class CameraControl {
                 telemetryControl.update();
             }
         });
-        FtcDashboard.getInstance().startCameraStream(webcam,60);
+        FtcDashboard.getInstance().startCameraStream(openCvWebcam,60);
 
-        /*// Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder()
-                //.setDrawAxes(false)
-                //.setDrawCubeProjection(false)
-                //.setDrawTagOutline(true)
-                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-
-                // == CAMERA CALIBRATION ==
-                // If you do not manually specify calibration parameters, the SDK will attempt
-                // to load a predefined calibration for your camera.
-                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
-
-                // ... these parameters are fx, fy, cx, cy.
-
-                .build();
-
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
         }
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableCameraMonitoring(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        //builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
-        builder.addProcessor(aprilTag);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Disable or re-enable the aprilTag processor at any time.
-        //visionPortal.setProcessorEnabled(aprilTag, true);*/
-
-    }
 
     public void stream() {
 
-        telemetryControl.startCameraStream(webcam, 60);
+        telemetryControl.startCameraStream(openCvWebcam, 60);
 
     }
 
     public void close() {
 
-        webcam.closeCameraDevice();
+        openCvWebcam.closeCameraDevice();
 
     }
 
@@ -173,31 +152,91 @@ public class CameraControl {
         return location;
     }
 
-/*    @SuppressLint("DefaultLocale")
-    public void telemetryAprilTag() {
+    /**
+     * Initialize the AprilTag processor.
+     */
+    public void initAprilTag(HardwareMap hardwareMap) {
 
+        this.close();
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+    }
+
+    public void setDesiredTagId(int tagId) {
+
+        DESIRED_TAG_ID = tagId;
+
+    }
+
+    public void followAprilTag(DriveTrain driveTrain, AttachmentControl attachmentControl) {
+        targetFound = false;
+        desiredTag  = null;
+
+        // Step through the list of detected tags and look for a matching tag
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetryControl.addData("# AprilTags Detected", currentDetections.size());
-
-        // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetryControl.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetryControl.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetryControl.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetryControl.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetryControl.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetryControl.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            if ((detection.metadata != null)
+                    && ((DESIRED_TAG_ID <= 0) || (detection.id == DESIRED_TAG_ID))  ){
+                targetFound = true;
+                desiredTag = detection;
+                break;  // don't look any further.
             }
-        }   // end for() loop
+        }
 
-        // Add "key" information to telemetry
-        telemetryControl.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetryControl.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-        telemetryControl.addLine("RBE = Range, Bearing & Elevation");
+        // Tell the driver what we see, and what to do.
+        if (targetFound) {
+            telemetryControl.addData(">","HOLD Left-Bumper to Drive to Target\n");
+            telemetryControl.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+            telemetryControl.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+            telemetryControl.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+            telemetryControl.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+        } else {
+            telemetryControl.addData(">","Drive using joystick to find target\n");
+        }
 
-    }*/
+        // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
+        if (gamepad1.left_bumper && targetFound) {
+
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            double  headingError    = desiredTag.ftcPose.bearing;
+            double  yawError        = desiredTag.ftcPose.yaw;
+
+            // Use the speed and turn "gains" to calculate how we want the robot to move.
+            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+            telemetryControl.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+        } else {
+
+            // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
+            drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+            strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
+            turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+            telemetryControl.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+        }
+        telemetryControl.update();
+
+        // Apply desired axes motions to the drivetrain.
+        driveTrain.MecanumTeleOp(drive, strafe, turn, attachmentControl);
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+        while (time.seconds() < 0.01);
+    }
 
 }
 

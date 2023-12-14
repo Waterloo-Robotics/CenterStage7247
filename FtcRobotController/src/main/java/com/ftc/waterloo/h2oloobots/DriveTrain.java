@@ -194,9 +194,9 @@ public class DriveTrain {
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+//        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 //        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-//        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
