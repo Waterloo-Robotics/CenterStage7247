@@ -1,6 +1,7 @@
 package com.ftc.waterloo.h2oloobots;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.ftc.waterloo.h2oloobots.*;
 
 public abstract class H2OLooTeleOp extends LinearOpMode {
 

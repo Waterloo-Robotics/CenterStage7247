@@ -2,6 +2,7 @@ package com.ftc.waterloo.h2oloobots;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,6 +25,10 @@ public class AttachmentControl {
     CRServo rollerCRServo;
 
     DcMotor intakeMotor;
+    DcMotor liftLeft, liftRight;
+    MotorControlGroup liftGroup;
+    Servo boxServoLeft, boxServoRight;
+    Servo boxDoorServo;
     boolean lastRightBumper = false;
     boolean lastLeftBumper = false;
     DcMotor hangMotor;
@@ -36,14 +41,75 @@ public class AttachmentControl {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
 
-        droneServo = hardwareMap.servo.get("droneServo");
+//        droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
-//        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
 
-//        hangMotor = hardwareMap.dcMotor.get("hangMotor");
-//        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeft = hardwareMap.dcMotor.get("liftLeft");
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight = hardwareMap.dcMotor.get("liftRight");
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        liftGroup = new MotorControlGroup(liftLeft, liftRight);
+        liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
+
+        boxServoLeft = hardwareMap.servo.get("boxServoLeft");
+        boxServoRight = hardwareMap.servo.get("boxServoRight");
+        boxDoorServo = hardwareMap.servo.get("boxDoorServo");
+
+        hangMotor = hardwareMap.dcMotor.get("hangMotor");
+        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
-        hangServo.scaleRange(0.16, 0.604);
+        hangServo.scaleRange(0.16, 0.517);
+
+    }
+
+    public void boxManual() {
+
+        if (gamepad2.y) {
+
+            boxServoRight.setPosition(boxServoRight.getPosition() + 0.003);
+
+        } else if (gamepad2.a) {
+
+            boxServoRight.setPosition(boxServoRight.getPosition() - 0.003);
+
+        }
+
+        if (gamepad2.dpad_up) {
+
+            boxServoLeft.setPosition(boxServoLeft.getPosition() + 0.003);
+
+        } else if (gamepad2.dpad_down) {
+
+            boxServoLeft.setPosition(boxServoLeft.getPosition() - 0.003);
+
+        }
+
+        if (gamepad2.left_bumper) {
+
+            boxDoorServo.setPosition(boxDoorServo.getPosition() + 0.003);
+
+        } else if (gamepad2.right_bumper) {
+
+            boxDoorServo.setPosition(boxDoorServo.getPosition() - 0.003);
+
+        }
+
+        telemetryControl.addData("Box Servo Right Position", boxServoRight.getPosition());
+        telemetryControl.addData("Box Servo Left Position", boxServoLeft.getPosition());
+        telemetryControl.addData("Box Door Servo Position", boxDoorServo.getPosition());
+
+    }
+
+    public void liftManual() {
+
+        liftGroup.setPower(gamepad2.left_stick_y);
+        telemetryControl.addData("Lift Group Position", liftGroup.getCurrentPosition());
 
     }
 
@@ -55,9 +121,9 @@ public class AttachmentControl {
 
     public void hangServoManual() {
 
-        if (gamepad2.a) {
+        if (gamepad1.dpad_down) {
             hangServo.setPosition(hangServo.getPosition() + 0.001);
-        } else if (gamepad2.b) {
+        } else if (gamepad1.dpad_right) {
             hangServo.setPosition(hangServo.getPosition() - 0.001);
         }
 
@@ -105,7 +171,7 @@ public class AttachmentControl {
 
             if (!lastRightBumper && intakeMotor.getPower() < 0.45) {
 
-                intakeMotor.setPower(0.5);
+                intakeMotor.setPower(0.75);
                 rollerCRServo.setPower(-1);
 
             } else if (!lastRightBumper) {
@@ -180,6 +246,19 @@ public class AttachmentControl {
             droneServo.setPosition(0);
 
         }
+
+    }
+
+    public void droneManual() {
+
+        if (gamepad1.a) {
+            droneServo.setPosition(droneServo.getPosition() + 0.03);
+        } else if (gamepad1.b) {
+            droneServo.setPosition(droneServo.getPosition() - 0.03);
+        }
+
+        telemetryControl.addData("Drone Servo Position", droneServo.getPosition());
+
 
     }
 

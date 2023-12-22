@@ -2,6 +2,7 @@ package com.ftc.waterloo.h2oloobots;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.ftc.waterloo.h2oloobots.*;
 
 public abstract class H2OLooAuto extends LinearOpMode {
 

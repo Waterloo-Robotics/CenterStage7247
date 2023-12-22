@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import com.ftc.waterloo.h2oloobots.DriveTrain;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -24,8 +23,11 @@ public class AttachmentTest extends H2OLooTeleOp {
 
 //            attachmentControl.liftTeleOp();
 
-        attachmentControl.hangServoManual();
-        attachmentControl.hangMotorManual();
+//        attachmentControl.hangServoManual();
+//        attachmentControl.hangMotorManual();
+
+//        attachmentControl.liftManual();
+        attachmentControl.intakeTeleOp();
 
         telemetryControl.update();
 
