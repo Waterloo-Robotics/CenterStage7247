@@ -30,7 +30,8 @@ public class TeleOp7247 extends H2OLooTeleOp {
         /* Here we call control for our drone, our intake, our hanging motor, and our hanging servo.
         *  The attachmentControl variable has our desired controls nested in it, so we don't pass in
         *  any buttons.*/
-        attachmentControl.droneTeleOp(); // Controller 1 A button launches the drone
+        attachmentControl.liftTeleOp();
+//        attachmentControl.droneTeleOp(); // Controller 1 A button launches the drone
         attachmentControl.intakeTeleOp(); /* Controller 1 right bumper toggles the intake,
                                           *  Controller 1 left bumper controls outtake.*/
         attachmentControl.hangMotorManual(); // Controller 2 left joystick controls our winch

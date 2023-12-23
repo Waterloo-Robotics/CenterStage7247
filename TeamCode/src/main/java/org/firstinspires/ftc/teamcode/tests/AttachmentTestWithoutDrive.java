@@ -20,7 +20,8 @@ public class AttachmentTestWithoutDrive extends OpMode {
 
     public void loop() {
 
-//        attachmentControl.intakeTeleOp();
+        attachmentControl.intakeTeleOp();
+        attachmentControl.liftManual();
         attachmentControl.boxManual();
         attachmentControl.hangServoManual();
 //        attachmentControl.droneManual();

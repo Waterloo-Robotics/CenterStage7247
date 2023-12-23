@@ -1,35 +1,39 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
+import com.acmerobotics.dashboard.config.Config;
+import com.ftc.waterloo.h2oloobots.*;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+//@Disabled
+@Config
 @TeleOp(name = "Attachment Test", group = "a")
 public class AttachmentTest extends H2OLooTeleOp {
 
+    public static int DESIRED_TAG_ID = 5;
+
     @Override
-    public void opModeInit() {}
+    public void opModeInit() {
+        cameraControl.initAprilTag(hardwareMap);
+    }
 
     @Override
     public void opModePeriodic() {
 
-        driveTrain.teleOpDrive(
-                gamepad1.left_stick_y,
-                gamepad1.left_stick_x,
-                gamepad1.right_stick_x,
+        cameraControl.setDesiredTagId(DESIRED_TAG_ID);
+        cameraControl.followAprilTag(
+                driveTrain,
                 attachmentControl
         );
 
-//            attachmentControl.liftTeleOp();
+            attachmentControl.liftTeleOp();
 
-//        attachmentControl.hangServoManual();
-//        attachmentControl.hangMotorManual();
+        attachmentControl.hangMotorManual();
 
-//        attachmentControl.liftManual();
         attachmentControl.intakeTeleOp();
-
-        telemetryControl.update();
+//        attachmentControl.liftManual();
+//        attachmentControl.boxManual();
+        attachmentControl.hangServoTeleOp();
 
     }
 

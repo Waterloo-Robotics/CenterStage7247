@@ -2,6 +2,7 @@ package com.ftc.waterloo.h2oloobots;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,8 +26,8 @@ public class AttachmentControl {
     CRServo rollerCRServo;
 
     DcMotor intakeMotor;
-    DcMotor liftLeft, liftRight;
-    MotorControlGroup liftGroup;
+    DcMotorEx liftLeft, liftRight;
+    MotorControlGroupEx liftGroup;
     Servo boxServoLeft, boxServoRight;
     Servo boxDoorServo;
     boolean lastRightBumper = false;
@@ -34,6 +35,7 @@ public class AttachmentControl {
     DcMotor hangMotor;
     Servo hangServo;
     boolean isGP2APressed = false;
+    boolean isBPressed = false;
 
     public AttachmentControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, Gamepad gamepad1, Gamepad gamepad2) {
 
@@ -45,26 +47,35 @@ public class AttachmentControl {
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
 
-        liftLeft = hardwareMap.dcMotor.get("liftLeft");
-        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeft = (DcMotorEx) hardwareMap.dcMotor.get("liftLeft");
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftRight = hardwareMap.dcMotor.get("liftRight");
-        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight = (DcMotorEx) hardwareMap.dcMotor.get("liftRight");
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        liftGroup = new MotorControlGroup(liftLeft, liftRight);
+        liftGroup = new MotorControlGroupEx(liftLeft, liftRight);
         liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
+        liftGroup.setTargetPosition(0);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftGroup.setTargetPositionTolerance(80);
 
         boxServoLeft = hardwareMap.servo.get("boxServoLeft");
+        boxServoLeft.setDirection(Servo.Direction.REVERSE);
+//        boxServoLeft.scaleRange(0, 0.686);
+        boxServoLeft.setPosition(0.686);
         boxServoRight = hardwareMap.servo.get("boxServoRight");
+//        boxServoRight.scaleRange(0, 0.686);
+        boxServoRight.setPosition(0.686);
         boxDoorServo = hardwareMap.servo.get("boxDoorServo");
+        boxDoorServo.scaleRange(0.585, 1);
 
         hangMotor = hardwareMap.dcMotor.get("hangMotor");
         hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
-        hangServo.scaleRange(0.16, 0.517);
+        hangServo.scaleRange(0.402, 0.483);
 
     }
 
@@ -73,19 +84,11 @@ public class AttachmentControl {
         if (gamepad2.y) {
 
             boxServoRight.setPosition(boxServoRight.getPosition() + 0.003);
+            boxServoLeft.setPosition(boxServoLeft.getPosition() + 0.003);
 
         } else if (gamepad2.a) {
 
             boxServoRight.setPosition(boxServoRight.getPosition() - 0.003);
-
-        }
-
-        if (gamepad2.dpad_up) {
-
-            boxServoLeft.setPosition(boxServoLeft.getPosition() + 0.003);
-
-        } else if (gamepad2.dpad_down) {
-
             boxServoLeft.setPosition(boxServoLeft.getPosition() - 0.003);
 
         }
@@ -107,9 +110,88 @@ public class AttachmentControl {
     }
 
     public void liftManual() {
+        liftGroup.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftGroup.setPower(gamepad2.left_stick_y);
         telemetryControl.addData("Lift Group Position", liftGroup.getCurrentPosition());
+
+    }
+
+    public void liftTeleOp() {
+
+        if (gamepad2.dpad_down || gamepad1.dpad_down) {
+
+            liftGroup.setTargetPosition(0);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0);
+            boxServoLeft.setPosition(0.686);
+            boxServoRight.setPosition(0.686);
+            boxDoorServo.setPosition(0);
+
+        } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
+
+            liftGroup.setTargetPosition(-1800);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.287);
+            boxServoRight.setPosition(0.356);
+            boxDoorServo.setPosition(1);
+
+        }
+
+        if (gamepad1.dpad_right) {
+
+            boxServoLeft.setPosition(0.686);
+            boxServoRight.setPosition(0.686);
+            boxDoorServo.setPosition(0);
+
+        }
+
+        if (gamepad1.b) {
+
+            if (!isBPressed) {
+
+                if (boxDoorServo.getPosition() == 1) {
+
+                    boxDoorServo.setPosition(0);
+
+                } else {
+
+                    boxDoorServo.setPosition(1);
+
+                }
+
+            }
+
+            isBPressed = true;
+
+        } else {
+
+            isBPressed = false;
+
+        }
+
+
+        if (!liftGroup.isBusy() /*&&
+                (Math.max(liftGroup.getCurrentPosition(), liftGroup.getTargetPosition())
+                        - Math.min(liftGroup.getCurrentPosition(), liftGroup.getTargetPosition())
+                        < 200)*/) {
+
+            if (liftGroup.getTargetPosition() > 0) liftGroup.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftGroup.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            liftGroup.setPower(0);
+
+        } else {
+
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            if (liftGroup.getCurrentPosition() > -200 || liftGroup.getCurrentPosition() < -1600) liftGroup.setPower(0.5);
+             else liftGroup.setPower(1);
+
+        }
+
+        telemetryControl.addData("Lift Position", liftGroup.getCurrentPosition());
+        telemetryControl.addData("Lift Power", liftGroup.getPower());
 
     }
 
@@ -171,7 +253,7 @@ public class AttachmentControl {
 
             if (!lastRightBumper && intakeMotor.getPower() < 0.45) {
 
-                intakeMotor.setPower(0.75);
+                intakeMotor.setPower(1);
                 rollerCRServo.setPower(-1);
 
             } else if (!lastRightBumper) {
@@ -193,7 +275,7 @@ public class AttachmentControl {
 
             if (!lastLeftBumper && intakeMotor.getPower() > -0.3) {
 
-                intakeMotor.setPower(-0.35);
+                intakeMotor.setPower(-0.5);
                 rollerCRServo.setPower(1);
 
             } else if (!lastLeftBumper) {

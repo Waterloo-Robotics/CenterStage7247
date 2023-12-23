@@ -224,15 +224,15 @@ public class CameraControl {
         } else {
 
             // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-            drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-            strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
-            turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+            drive  = gamepad1.left_stick_y;  // Reduce drive rate to 50%.
+            strafe = gamepad1.left_stick_x;  // Reduce strafe rate to 50%.
+            turn   = gamepad1.right_stick_x;  // Reduce turn rate to 33%.
             telemetryControl.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
         }
         telemetryControl.update();
 
         // Apply desired axes motions to the drivetrain.
-        driveTrain.MecanumTeleOp(drive, strafe, turn, attachmentControl);
+        driveTrain.teleOpDrive(drive, strafe, turn, attachmentControl);
         ElapsedTime time = new ElapsedTime();
         time.reset();
         while (time.seconds() < 0.01);
