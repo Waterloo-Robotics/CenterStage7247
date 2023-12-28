@@ -35,9 +35,10 @@ public abstract class H2OLooTeleOp extends LinearOpMode {
 
     }
 
-    public void setAlliance(CameraControl.Alliance alliance) {
+    public void initCamera(CameraControl.Alliance alliance) {
 
         this.alliance = alliance;
+        this.cameraControl = new CameraControl(hardwareMap, telemetryControl, this.alliance, gamepad1, gamepad2);
 
     }
 

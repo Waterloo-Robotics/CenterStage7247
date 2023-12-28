@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.ftc.waterloo.h2oloobots.*;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 //@Disabled
@@ -21,12 +20,14 @@ public class AttachmentTest extends H2OLooTeleOp {
     public void opModePeriodic() {
 
         cameraControl.setDesiredTagId(DESIRED_TAG_ID);
-        cameraControl.followAprilTag(
+        cameraControl.followAprilTagTeleOp(
                 driveTrain,
                 attachmentControl
         );
 
-            attachmentControl.liftTeleOp();
+//            attachmentControl.liftTeleOp();
+
+            attachmentControl.touchSensorTelemetry();
 
         attachmentControl.hangMotorManual();
 

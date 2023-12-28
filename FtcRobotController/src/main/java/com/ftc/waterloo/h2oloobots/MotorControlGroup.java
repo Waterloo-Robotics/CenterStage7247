@@ -108,7 +108,7 @@ public class MotorControlGroup {
 
     /**Returns whether or not either of the motors are currently being commanded
      * to a position as a boolean.*/
-    boolean isBusy() {
+    public boolean isBusy() {
 
         return motor1.isBusy() || motor2.isBusy();
 

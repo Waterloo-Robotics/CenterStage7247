@@ -12,7 +12,7 @@ public class TeleOp7247 extends H2OLooTeleOp {
 
         // Setting our drivetrain type to mecanum
         driveTrain.setDriveTrainType(DriveTrain.DriveTrainType.MECANUM);
-
+        cameraControl.close();
     }
 
     @Override

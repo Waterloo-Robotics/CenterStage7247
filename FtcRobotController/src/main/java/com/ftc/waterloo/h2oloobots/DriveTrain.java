@@ -41,10 +41,10 @@ public class DriveTrain {
     DriveTrainType driveTrainType = DriveTrainType.MECANUM;
 
     // defines drive motors for a 4 wheel drive
-    DcMotor fl, fr, bl, br;
+    public DcMotor fl, fr, bl, br;
 
     // defines drive motors for a two wheel drive
-    DcMotor left, right;
+    public DcMotor left, right;
 
     /* counts per revolution of the drive motors. None of this is necessary if you aren't using
      * the encoder drive in this file. */
@@ -255,6 +255,15 @@ public class DriveTrain {
 
     }
 
+    public void pushOnBackdrop() {
+
+        fl.setPower(1);
+        fr.setPower(1);
+        bl.setPower(1);
+        br.setPower(1);
+
+    }
+
     /**Simple Autonomous code to drive at set powers for a set time.
      * @param FRPower The power to be set to the front right motor.
      * @param FLPower The power to be set to the front left motor.
@@ -310,7 +319,7 @@ public class DriveTrain {
      *        negative is left)
      * @param DEGREES_TURN The degrees to turn (positive is clockwise,
      *        negative is counterclockwise)*/
-    public void EncoderAutoMecanumDrive(double INCHES_FB, double INCHES_LR, double DEGREES_TURN, double SPEED, int time) {
+    public void EncoderAutoMecanumDrive(double INCHES_FB, double INCHES_LR, double DEGREES_TURN, double SPEED, double time) {
 
         ElapsedTime timer = new ElapsedTime();
 
@@ -321,20 +330,20 @@ public class DriveTrain {
         }
 
         int frTargetPosition = fr.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                - (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                + (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int brTargetPosition = br.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                + (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                - (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int flTargetPosition = fl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                + (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                - (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
         int blTargetPosition = bl.getCurrentPosition()
-                + (int) (this.COUNTS_PER_INCH * INCHES_FB)
-                - (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                + (int) (this.COUNTS_PER_INCH * INCHES_LR)
                 + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
 
         fr.setTargetPosition(frTargetPosition);

@@ -1,21 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.ftc.waterloo.h2oloobots.CameraControl;
+import com.ftc.waterloo.h2oloobots.H2OLooAuto;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+//@Disabled
 @TeleOp
-public class CameraTest extends H2OLooTeleOp {
+public class CameraTest extends H2OLooAuto {
 
     @Override
     public void opModeInit() {
-        setAlliance(CameraControl.Alliance.BLUE);
+        initCamera(CameraControl.Alliance.RED);
     }
 
     @Override
     public void opModePeriodic() {
         telemetryControl.addData("Prop Location", cameraControl.getLocation());
+        cameraControl.stream();
     }
 }

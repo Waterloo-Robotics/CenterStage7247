@@ -63,7 +63,7 @@ public class CameraControl {
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 16.0; //  this is how close the camera should get to the target (inches)
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     static int DESIRED_TAG_ID = 5;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
@@ -181,7 +181,7 @@ public class CameraControl {
 
     }
 
-    public void followAprilTag(DriveTrain driveTrain, AttachmentControl attachmentControl) {
+    public void followAprilTagTeleOp(DriveTrain driveTrain, AttachmentControl attachmentControl) {
         targetFound = false;
         desiredTag  = null;
 
@@ -217,7 +217,7 @@ public class CameraControl {
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
             drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
             strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
             telemetryControl.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
@@ -236,6 +236,46 @@ public class CameraControl {
         ElapsedTime time = new ElapsedTime();
         time.reset();
         while (time.seconds() < 0.01);
+    }
+
+    public void followAprilTagAuto(DriveTrain driveTrain) {
+        targetFound = false;
+        desiredTag  = null;
+
+        // Step through the list of detected tags and look for a matching tag
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if ((detection.metadata != null)
+                    && ((DESIRED_TAG_ID <= 0) || (detection.id == DESIRED_TAG_ID))  ){
+                targetFound = true;
+                desiredTag = detection;
+                break;  // don't look any further.
+            }
+        }
+
+        // Tell the driver what we see, and what to do.
+        if (targetFound) {
+            telemetryControl.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+            telemetryControl.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+            telemetryControl.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+            telemetryControl.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+            double  headingError    = desiredTag.ftcPose.bearing;
+            double  yawError        = desiredTag.ftcPose.yaw;
+
+            // Use the speed and turn "gains" to calculate how we want the robot to move.
+            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+            telemetryControl.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+        }
+
+        // Apply desired axes motions to the drivetrain.
+        driveTrain.MecanumTeleOp(drive, strafe, turn);
+
     }
 
 }
