@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.ftc.waterloo.h2oloobots.*;
 import com.ftc.waterloo.h2oloobots.AttachmentControl;
 import com.ftc.waterloo.h2oloobots.CameraControl;
 import com.ftc.waterloo.h2oloobots.H2OLooAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Audience Blue")
-public class AudienceBlue extends H2OLooAuto {
+@Autonomous(name = "Stage Red")
+public class StageRed extends H2OLooAuto {
 
     CameraControl.PropLocation location;
 
     @Override
     public void opModeInit() {
 
-        initCamera(CameraControl.Alliance.BLUE);
+        initCamera(CameraControl.Alliance.RED);
 
         while (opModeInInit()) {
             location = cameraControl.getLocation();
@@ -51,31 +50,31 @@ public class AudienceBlue extends H2OLooAuto {
         switch (location) {
 
             case LEFT:
-                driveTrain.EncoderAutoMecanumDrive(4, 0, 38, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(0, -28, 0, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, 31, 0, 0.5, 2);
+
+                driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -130, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(-12, 3, 0, 0.5, 1.5);
                 break;
 
             default:
             case CENTER:
-                driveTrain.EncoderAutoMecanumDrive(0, -14, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1.75);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-84, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, 28, 0, 0.5, 2);
+
+                driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.5);
+                driveTrain.EncoderAutoMecanumDrive(0, -16, 0, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, 4, 0, 0.5, 1.5);
                 break;
 
             case RIGHT:
-                driveTrain.EncoderAutoMecanumDrive(1, 0, 0, 0.5, 0.25);
-                driveTrain.EncoderAutoMecanumDrive(0, 13, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-32, 0, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, 25, 0, 0.5, 2);
+
+                driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.5);
+                driveTrain.EncoderAutoMecanumDrive(0, -12, 0, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, 12, 0, 0.5, 3);
                 break;
 
         }
+
         attachmentControl.score();
         driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1);
         driveTrain.fl.setPower(0.5);

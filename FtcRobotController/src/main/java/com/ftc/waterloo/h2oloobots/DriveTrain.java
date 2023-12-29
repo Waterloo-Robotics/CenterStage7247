@@ -383,7 +383,7 @@ public class DriveTrain {
 
         ElapsedTime waitTimer = new ElapsedTime();
         waitTimer.reset();
-        while (waitTimer.seconds() <= 0.5);
+        while (waitTimer.seconds() <= 0.25);
 
     }
 

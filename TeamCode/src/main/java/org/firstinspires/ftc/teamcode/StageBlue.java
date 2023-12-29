@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.ftc.waterloo.h2oloobots.*;
 import com.ftc.waterloo.h2oloobots.AttachmentControl;
 import com.ftc.waterloo.h2oloobots.CameraControl;
 import com.ftc.waterloo.h2oloobots.H2OLooAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Audience Red")
-public class AudienceRed extends H2OLooAuto {
+@Autonomous(name = "Stage Blue")
+public class StageBlue extends H2OLooAuto {
 
     ElapsedTime time = new ElapsedTime();
     CameraControl.PropLocation location;
@@ -16,7 +15,7 @@ public class AudienceRed extends H2OLooAuto {
     @Override
     public void opModeInit() {
 
-        initCamera(CameraControl.Alliance.RED);
+        initCamera(CameraControl.Alliance.BLUE);
 
         while (opModeInInit()) {
             location = cameraControl.getLocation();
@@ -41,7 +40,7 @@ public class AudienceRed extends H2OLooAuto {
             default:
             case CENTER:
 
-                driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1.25);
+                driveTrain.EncoderAutoMecanumDrive(-26, 0, 0, 0.5, 1.25);
                 break;
 
             case RIGHT:
@@ -56,42 +55,27 @@ public class AudienceRed extends H2OLooAuto {
 
             case LEFT:
 
-                driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.5);
-                driveTrain.EncoderAutoMecanumDrive(0, -11, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-28, 0, 0, 0.5, 1.75);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, -32, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(0, -8, 0, 0.5, 1.5);
                 break;
 
             default:
             case CENTER:
 
-                driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.75);
-                driveTrain.EncoderAutoMecanumDrive(0, 18, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-27, 0, 0, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(-84, 0, 0, 0.5, 6);
-                driveTrain.EncoderAutoMecanumDrive(0, -33, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.25);
+                driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 2.5);
                 break;
 
             case RIGHT:
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, 70, 0.5, 1.25);
-                driveTrain.EncoderAutoMecanumDrive(-28, 0, 0, 0.5, 1.25);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -90, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(0, -35, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 150, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(-12, -8, 0, 0.5, 1.5);
                 break;
         }
 
-//        cameraControl.initAprilTag(hardwareMap);
-
-//        time.reset();
-//        while (time.seconds() < 1.5) {
-//            cameraControl.followAprilTagAuto(driveTrain);
-//        }
         attachmentControl.score();
         driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1);
         driveTrain.fl.setPower(0.5);
