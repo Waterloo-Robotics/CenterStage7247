@@ -34,11 +34,15 @@ public class AttachmentControl {
     boolean lastRightBumper = false;
     boolean lastLeftBumper = false;
     boolean isGoingUp = false;
+    boolean isGoingUpUp = false;
     ElapsedTime upTime = new ElapsedTime();
+    ElapsedTime upDoublePressTime = new ElapsedTime();
+    boolean isUpPressedOnce = true;
     DcMotor hangMotor;
     Servo hangServo;
     boolean isGP2APressed = false;
     boolean isBPressed = false;
+    boolean isDpadUpPressed = false;
     TouchSensor leftTouch, rightTouch;
 
     public AttachmentControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, Gamepad gamepad1, Gamepad gamepad2) {
@@ -140,22 +144,58 @@ public class AttachmentControl {
             boxServoLeft.setPosition(0.686);
             boxServoRight.setPosition(0.686);
             boxDoorServo.setPosition(0);
+            isGoingUp = false;
+            isGoingUpUp = false;
 
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
-
-            boxDoorServo.setPosition(1);
-            isGoingUp = true;
             upTime.reset();
 
-        }
+            if (!isDpadUpPressed) {
 
+                if (!isUpPressedOnce || upDoublePressTime.seconds() > 0.5) {
+
+                    isUpPressedOnce = true;
+                    upDoublePressTime.reset();
+                    isGoingUp = true;
+                    isGoingUpUp = false;
+
+                } else if (isUpPressedOnce && upDoublePressTime.seconds() <= 0.5) {
+
+                    isGoingUpUp = true;
+                    isGoingUp = false;
+                    isUpPressedOnce = false;
+
+                } else {
+
+                    isUpPressedOnce = false;
+
+                }
+
+            }
+
+            isDpadUpPressed = true;
+            boxDoorServo.setPosition(1);
+
+        }
+        isDpadUpPressed = gamepad1.dpad_up || gamepad2.dpad_up;
         if (isGoingUp && upTime.seconds() > 0.5) {
+
+            liftGroup.setTargetPosition(-1200);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.287);
+            boxServoRight.setPosition(0.356);
+            isGoingUp = false;
+            isGoingUpUp = false;
+
+        } else if (isGoingUpUp && upTime.seconds() > 0.5) {
 
             liftGroup.setTargetPosition(-1800);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.287);
             boxServoRight.setPosition(0.356);
+            isGoingUpUp = false;
             isGoingUp = false;
 
         }
@@ -207,15 +247,12 @@ public class AttachmentControl {
 
         }
 
-        telemetryControl.addData("Lift Position", liftGroup.getCurrentPosition());
-        telemetryControl.addData("Lift Power", liftGroup.getPower());
-
     }
 
     public void score() {
 
         boxDoorServo.setPosition(1);
-        liftGroup.setTargetPosition(-1800);
+        liftGroup.setTargetPosition(-1200);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangServo.setPosition(0.84);
         boxServoLeft.setPosition(0.287);
