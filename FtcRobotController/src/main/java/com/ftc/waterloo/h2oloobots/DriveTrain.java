@@ -223,7 +223,7 @@ public class DriveTrain {
                     speedMul = 0.5;
 
                 } else speedMul = 1;
-                this.MecanumTeleOp(FBInput * speedMul, LRInput * speedMul, pivotInput * speedMul);
+                this.MecanumTeleOp(FBInput * speedMul, LRInput, pivotInput);
                 break;
 
         }
