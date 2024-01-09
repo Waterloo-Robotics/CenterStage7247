@@ -45,13 +45,14 @@ public class AttachmentControl {
     boolean isDpadUpPressed = false;
     TouchSensor leftTouch, rightTouch;
 
+
     public AttachmentControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, Gamepad gamepad1, Gamepad gamepad2) {
 
         this.telemetryControl = telemetryControl;
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
 
-//        droneServo = hardwareMap.servo.get("droneServo");
+        droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
 
@@ -373,7 +374,7 @@ public class AttachmentControl {
 
     public void droneTeleOp() {
 
-        if (gamepad1.a) {
+        if (gamepad2.b) {
 
             droneServo.setPosition(0.5);
 

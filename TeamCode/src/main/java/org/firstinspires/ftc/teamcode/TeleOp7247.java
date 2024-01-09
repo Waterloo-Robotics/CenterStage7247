@@ -36,8 +36,9 @@ public class TeleOp7247 extends H2OLooTeleOp {
                                           *  Controller 1 left bumper controls outtake.*/
         attachmentControl.hangMotorManual(); // Controller 2 left joystick controls our winch
         attachmentControl.hangServoTeleOp(); /* Controller 2 A button toggles our servo for
-                                             *  deploying the hook between upright, fully extended,
+                                            *  deploying the hook between upright, fully extended,
                                              *  and fully retracted positions. */
+        attachmentControl.droneTeleOp();
     }
 
 }
