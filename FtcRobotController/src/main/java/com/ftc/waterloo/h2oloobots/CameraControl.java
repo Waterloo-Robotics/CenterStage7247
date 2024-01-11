@@ -2,6 +2,8 @@ package com.ftc.waterloo.h2oloobots;
 
 import androidx.annotation.NonNull;
 
+import com.ftc.waterloo.h2oloobots.*;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;

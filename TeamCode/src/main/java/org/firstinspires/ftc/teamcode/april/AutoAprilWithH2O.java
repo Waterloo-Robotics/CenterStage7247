@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.ftc.waterloo.h2oloobots.CameraControl;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.ftc.waterloo.h2oloobots.*;
 
 @Config
 @TeleOp
