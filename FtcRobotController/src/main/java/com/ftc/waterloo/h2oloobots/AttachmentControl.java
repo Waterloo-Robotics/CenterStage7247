@@ -29,7 +29,7 @@ public class AttachmentControl {
     DcMotor intakeMotor;
     public DcMotorEx liftLeft, liftRight;
     public MotorControlGroupEx liftGroup;
-    Servo boxServoLeft, boxServoRight;
+    Servo boxServoLeft, boxServoRight, extLeft, extRight;
     public Servo boxDoorServo;
     boolean lastRightBumper = false;
     boolean lastLeftBumper = false;
@@ -81,6 +81,9 @@ public class AttachmentControl {
         boxDoorServo = hardwareMap.servo.get("boxDoorServo");
         boxDoorServo.scaleRange(0.585, 1);
 
+        extLeft = hardwareMap.servo.get("extLeft");
+        extRight = hardwareMap.servo.get("extRight");
+
         hangMotor = hardwareMap.dcMotor.get("hangMotor");
         hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
@@ -95,6 +98,33 @@ public class AttachmentControl {
 
         telemetryControl.addData("Left Touch", leftTouch.isPressed());
         telemetryControl.addData("Right Touch", rightTouch.isPressed());
+
+    }
+
+    public void extManual() {
+
+        if (gamepad1.dpad_right) {
+
+            extRight.setPosition(extRight.getPosition() + 0.03);
+
+        } else if (gamepad2.dpad_left) {
+
+            extRight.setPosition(extRight.getPosition() - 0.03);
+
+        }
+
+        if (gamepad1.b) {
+
+            extLeft.setPosition((extLeft.getPosition()) + 0.03);
+
+        } else if (gamepad1.x) {
+
+            extLeft.setPosition(extLeft.getPosition() - 0.03);
+
+        }
+
+        telemetryControl.addData("ExtLeft Servo Position", extLeft.getPosition());
+        telemetryControl.addData("ExtRight Servo Position", extRight.getPosition());
 
     }
 

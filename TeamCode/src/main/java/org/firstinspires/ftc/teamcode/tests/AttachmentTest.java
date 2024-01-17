@@ -20,21 +20,22 @@ public class AttachmentTest extends H2OLooTeleOp {
     public void opModePeriodic() {
 
         cameraControl.setDesiredTagId(DESIRED_TAG_ID);
-        cameraControl.followAprilTagTeleOp(
-                driveTrain,
-                attachmentControl
-        );
+//        cameraControl.followAprilTagTeleOp(
+//                driveTrain,
+//                attachmentControl
+//        );
 
 //            attachmentControl.liftTeleOp();
 
-            attachmentControl.touchSensorTelemetry();
+        attachmentControl.touchSensorTelemetry();
 
-        attachmentControl.hangMotorManual();
+//        attachmentControl.hangMotorManual();
 
-        attachmentControl.intakeTeleOp();
+//        attachmentControl.intakeTeleOp();
 //        attachmentControl.liftManual();
-//        attachmentControl.boxManual();
-        attachmentControl.hangServoTeleOp();
+        attachmentControl.boxManual();
+        attachmentControl.extManual();
+//        attachmentControl.hangServoTeleOp();
 
     }
 
