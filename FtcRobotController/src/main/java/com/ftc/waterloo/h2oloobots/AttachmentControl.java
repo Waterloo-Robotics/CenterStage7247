@@ -162,6 +162,7 @@ public class AttachmentControl {
         liftGroup.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftGroup.setPower(gamepad2.left_stick_y);
+        liftGroup.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetryControl.addData("Lift Group Position", liftGroup.getCurrentPosition());
 
     }

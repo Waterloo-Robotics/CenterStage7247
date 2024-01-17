@@ -32,7 +32,7 @@ public class AttachmentTest extends H2OLooTeleOp {
 //        attachmentControl.hangMotorManual();
 
 //        attachmentControl.intakeTeleOp();
-//        attachmentControl.liftManual();
+        attachmentControl.liftManual();
         attachmentControl.boxManual();
         attachmentControl.extManual();
 //        attachmentControl.hangServoTeleOp();
