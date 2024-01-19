@@ -38,7 +38,7 @@ public class AttachmentControl {
     ElapsedTime upTime = new ElapsedTime();
     ElapsedTime upDoublePressTime = new ElapsedTime();
     boolean isUpPressedOnce = true;
-    DcMotor hangMotor;
+    public DcMotor hangMotor;
     Servo hangServo;
     boolean isGP2APressed = false;
     boolean isBPressed = false;
