@@ -33,9 +33,6 @@ public class AttachmentControl {
     public Servo boxDoorServo;
     boolean lastRightBumper = false;
     boolean lastLeftBumper = false;
-    boolean isGoingUp = false;
-    boolean isGoingUpUp = false;
-    boolean isGoingDown = false;
     ElapsedTime upTime = new ElapsedTime();
     ElapsedTime downTime = new ElapsedTime();
     ElapsedTime upDoublePressTime = new ElapsedTime();
@@ -44,8 +41,18 @@ public class AttachmentControl {
     Servo hangServo;
     boolean isGP2APressed = false;
     boolean isBPressed = false;
-    boolean isDpadUpPressed = false;
     TouchSensor leftTouch, rightTouch;
+
+    public enum ArmState {
+
+        INTAKE,
+        SCORE_LOW,
+        SCORE_MID,
+        SCORE_HIGH
+
+    }
+
+    ArmState armState = ArmState.INTAKE;
 
 
     public AttachmentControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, Gamepad gamepad1, Gamepad gamepad2) {
@@ -173,47 +180,27 @@ public class AttachmentControl {
 
         if (gamepad2.dpad_down || gamepad1.dpad_down) {
 
+            liftGroup.setTargetPosition(0);
+            hangServo.setPosition(0);
             extLeft.setPosition(0);
             extRight.setPosition(0);
-            isGoingUp = false;
-            isGoingUpUp = false;
-            isGoingDown = true;
+            armState = ArmState.INTAKE;
             downTime.reset();
             boxDoorServo.setPosition(0);
 
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
             upTime.reset();
-            isGoingDown = false;
+            armState = ArmState.SCORE_MID;
+            boxDoorServo.setPosition(1);
 
-            if (!isDpadUpPressed) {
-
-                if (!isUpPressedOnce || upDoublePressTime.seconds() > 0.5) {
-
-                    isUpPressedOnce = true;
-                    upDoublePressTime.reset();
-                    isGoingUp = true;
-                    isGoingUpUp = false;
-
-                } else if (isUpPressedOnce && upDoublePressTime.seconds() <= 0.5) {
-
-                    isGoingUpUp = true;
-                    isGoingUp = false;
-                    isUpPressedOnce = false;
-
-                } else {
-
-                    isUpPressedOnce = false;
-
-                }
-
-            }
-
-            isDpadUpPressed = true;
+        } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
+            if (armState == ArmState.INTAKE) upTime.reset();
+            armState = ArmState.SCORE_HIGH;
             boxDoorServo.setPosition(1);
 
         }
-        isDpadUpPressed = gamepad1.dpad_up || gamepad2.dpad_up;
-        if (isGoingUp && upTime.seconds() > 0.5) {
+
+        if (armState == ArmState.SCORE_MID && upTime.seconds() > 0.5) {
 
             liftGroup.setTargetPosition(-1200);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -221,7 +208,7 @@ public class AttachmentControl {
             boxServoLeft.setPosition(0.5);
             boxServoRight.setPosition(0.5);
 
-        } else if (isGoingUpUp && upTime.seconds() > 0.5) {
+        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
 
             liftGroup.setTargetPosition(-1800);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -231,29 +218,21 @@ public class AttachmentControl {
 
         }
 
-        if (isGoingUp && upTime.seconds() > 1) {
+        if (armState == ArmState.SCORE_MID && upTime.seconds() > 1) {
 
             extLeft.setPosition(1);
             extRight.setPosition(1);
-            isGoingUp = false;
-            isGoingUpUp = false;
 
-        } else if (isGoingUpUp && upTime.seconds() > 1) {
+        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 1) {
 
             extLeft.setPosition(1);
             extRight.setPosition(1);
-            isGoingUpUp = false;
-            isGoingUp = false;
 
         }
 
-        if (isGoingDown && downTime.seconds() > 1.5) {
-
-            liftGroup.setTargetPosition(0);
-            hangServo.setPosition(0);
+        if (armState == ArmState.INTAKE && downTime.seconds() > 2.0) {
             boxServoLeft.setPosition(0.877);
             boxServoRight.setPosition(0.877);
-            isGoingDown = false;
 
         }
 
