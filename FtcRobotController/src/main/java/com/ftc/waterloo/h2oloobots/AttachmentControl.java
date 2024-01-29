@@ -211,6 +211,8 @@ public class AttachmentControl {
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.5);
             boxServoRight.setPosition(0.5);
+            boxServoLeft.setPosition(0.577);
+            boxServoRight.setPosition(0.577);
 
         } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
 
