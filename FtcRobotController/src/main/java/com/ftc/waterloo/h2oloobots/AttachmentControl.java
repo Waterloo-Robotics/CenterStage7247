@@ -182,6 +182,8 @@ public class AttachmentControl {
 
             liftGroup.setTargetPosition(0);
             hangServo.setPosition(0);
+            boxServoLeft.setPosition(0.69);
+            boxServoRight.setPosition(0.69);
             extLeft.setPosition(0);
             extRight.setPosition(0);
             armState = ArmState.INTAKE;
@@ -189,11 +191,13 @@ public class AttachmentControl {
             boxDoorServo.setPosition(0);
 
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
+
             upTime.reset();
             armState = ArmState.SCORE_MID;
             boxDoorServo.setPosition(1);
 
-        } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
+        } else if (gamepad2.dpad_right || gamepad1.dpad_right) {
+
             if (armState == ArmState.INTAKE) upTime.reset();
             armState = ArmState.SCORE_HIGH;
             boxDoorServo.setPosition(1);
@@ -231,16 +235,9 @@ public class AttachmentControl {
         }
 
         if (armState == ArmState.INTAKE && downTime.seconds() > 2.0) {
-            boxServoLeft.setPosition(0.877);
-            boxServoRight.setPosition(0.877);
-
-        }
-
-        if (gamepad1.dpad_right) {
 
             boxServoLeft.setPosition(0.877);
             boxServoRight.setPosition(0.877);
-            boxDoorServo.setPosition(1);
 
         }
 
