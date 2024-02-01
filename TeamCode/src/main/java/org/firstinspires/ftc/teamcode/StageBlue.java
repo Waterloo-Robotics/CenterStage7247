@@ -45,7 +45,7 @@ public class StageBlue extends H2OLooAuto {
 
             case RIGHT:
 
-                driveTrain.EncoderAutoMecanumDrive(-26, 0, -60, 0.75, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(-24, 0, -55, 0.75, 1.5);
                 break;
         }
 
@@ -57,7 +57,7 @@ public class StageBlue extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(0, -8, 0, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(0, -4, 0, 0.5, 1.5);
                 break;
 
             default:
@@ -71,23 +71,25 @@ public class StageBlue extends H2OLooAuto {
             case RIGHT:
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, 150, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(-12, -8, 0, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 145, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(-20, -14.25, 0, 0.5, 1.5);
                 break;
         }
 
         attachmentControl.score();
-        driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1);
-        driveTrain.fl.setPower(0.5);
-        driveTrain.fr.setPower(0.5);
-        driveTrain.bl.setPower(0.5);
-        driveTrain.br.setPower(0.5);
-        sleep(500);
-        attachmentControl.boxDoorServo.setPosition(0);
         sleep(2000);
+        driveTrain.EncoderAutoMecanumDrive(-15, 0, 0, 0.5, 1);
+        driveTrain.fl.setPower(0.15);
+        driveTrain.fr.setPower(0.15);
+        driveTrain.bl.setPower(0.15);
+        driveTrain.br.setPower(0.15);
+        sleep(500);
+        attachmentControl.drop();
+        sleep(1000);
+        attachmentControl.lift();
+        sleep(500);
         driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 1);
         attachmentControl.compact();
-        driveTrain.EncoderAutoMecanumDrive(0, 30, 0, 0.5, 3);
         while (attachmentControl.liftGroup.isBusy());
 
     }

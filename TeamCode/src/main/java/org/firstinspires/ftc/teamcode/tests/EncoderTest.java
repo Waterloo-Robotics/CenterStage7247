@@ -18,7 +18,7 @@ public class EncoderTest extends H2OLooTeleOp {
     public void opModePeriodic() {
 
         driveTrain.driveEncoderRawTelemetry();
-        telemetryControl.addData("Hang Motor Position", attachmentControl.hangMotor.getCurrentPosition());
+//        telemetryControl.addData("Hang Motor Position", attachmentControl.hangMotor.getCurrentPosition());
 
     }
 

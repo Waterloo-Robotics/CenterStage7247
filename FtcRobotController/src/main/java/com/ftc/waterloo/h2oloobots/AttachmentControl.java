@@ -206,7 +206,7 @@ public class AttachmentControl {
 
         if (armState == ArmState.SCORE_MID && upTime.seconds() > 0.5) {
 
-            liftGroup.setTargetPosition(-1200);
+            liftGroup.setTargetPosition(-1000);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.5);
@@ -286,13 +286,30 @@ public class AttachmentControl {
 
     public void score() {
 
-        boxDoorServo.setPosition(0);
-        liftGroup.setTargetPosition(-1200);
+        liftGroup.setTargetPosition(0);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hangServo.setPosition(0.84);
-        boxServoLeft.setPosition(0.577);
-        boxServoRight.setPosition(0.577);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.51);
+        boxServoRight.setPosition(0.51);
         liftGroup.setPower(0.5);
+
+        upTime.reset();
+        while (upTime.seconds() < 0.5);
+        extLeft.setPosition(1);
+        extRight.setPosition(1);
+
+    }
+
+    public void drop() {
+
+        boxDoorServo.setPosition(0);
+
+    }
+
+    public void lift() {
+
+        boxServoLeft.setPosition(0.43);
+        boxServoRight.setPosition(0.43);
 
     }
 
@@ -301,10 +318,16 @@ public class AttachmentControl {
         liftGroup.setTargetPosition(0);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.69);
+        boxServoRight.setPosition(0.69);
+        liftGroup.setPower(1);
+        extLeft.setPosition(0);
+        extRight.setPosition(0);
+
+        upTime.reset();
+        while (upTime.seconds() < 2.0);
         boxServoLeft.setPosition(0.877);
         boxServoRight.setPosition(0.877);
-        boxDoorServo.setPosition(1);
-        liftGroup.setPower(1);
 
     }
 

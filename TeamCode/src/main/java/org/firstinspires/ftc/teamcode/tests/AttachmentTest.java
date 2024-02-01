@@ -24,6 +24,12 @@ public class AttachmentTest extends H2OLooTeleOp {
 //                driveTrain,
 //                attachmentControl
 //        );
+        driveTrain.teleOpDrive(
+                gamepad1.left_stick_y,
+                gamepad1.left_stick_x,
+                gamepad1.right_stick_x,
+                attachmentControl
+        );
 
 //            attachmentControl.liftTeleOp();
 
@@ -31,7 +37,7 @@ public class AttachmentTest extends H2OLooTeleOp {
 
 //        attachmentControl.hangMotorManual();
 
-        attachmentControl.intakeTeleOp();
+//        attachmentControl.intakeTeleOp();
         attachmentControl.liftManual();
         attachmentControl.boxManual();
         attachmentControl.extManual();
