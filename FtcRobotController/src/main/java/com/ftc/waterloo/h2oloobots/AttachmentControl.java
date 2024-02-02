@@ -248,6 +248,11 @@ public class AttachmentControl {
             extLeft.setPosition(1);
             extRight.setPosition(1);
 
+        } else if (armState == ArmState.SCORE_LOW && upTime.seconds() > 1) {
+
+            extLeft.setPosition(1);
+            extRight.setPosition(1);
+
         }
 
         if (armState == ArmState.INTAKE && downTime.seconds() > 2.0) {
