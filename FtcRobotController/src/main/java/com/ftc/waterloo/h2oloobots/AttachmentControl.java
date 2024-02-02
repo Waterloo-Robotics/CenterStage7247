@@ -199,6 +199,12 @@ public class AttachmentControl {
         } else if (gamepad2.dpad_right || gamepad1.dpad_right) {
 
             if (armState == ArmState.INTAKE) upTime.reset();
+            armState = ArmState.SCORE_LOW;
+            boxDoorServo.setPosition(1);
+
+        } else if (gamepad2.dpad_left || gamepad1.dpad_left) {
+
+            if (armState == ArmState.INTAKE) upTime.reset();
             armState = ArmState.SCORE_HIGH;
             boxDoorServo.setPosition(1);
 
@@ -206,7 +212,7 @@ public class AttachmentControl {
 
         if (armState == ArmState.SCORE_MID && upTime.seconds() > 0.5) {
 
-            liftGroup.setTargetPosition(-1000);
+            liftGroup.setTargetPosition(-750);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.5);
@@ -221,6 +227,14 @@ public class AttachmentControl {
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.577);
             boxServoRight.setPosition(0.577);
+
+        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
+
+            liftGroup.setTargetPosition(0);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0);
+            boxServoLeft.setPosition(0.43);
+            boxServoRight.setPosition(0.43);
 
         }
 
