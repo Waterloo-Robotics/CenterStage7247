@@ -53,7 +53,7 @@ public class StageRed extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -130, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(-12, 3, 0, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(-19, 8.5, -3, 0.5, 1.5);
                 break;
 
             default:
@@ -63,6 +63,7 @@ public class StageRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(0, -16, 0, 0.5, 3);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 3);
                 driveTrain.EncoderAutoMecanumDrive(0, 4, 0, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(-4, 0, 0, 0.5, 1);
                 break;
 
             case RIGHT:
@@ -70,25 +71,43 @@ public class StageRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, -12, 0, 0.5, 3);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, 12, 0, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, 6, -3, 0.5, 3);
                 break;
 
         }
 
         attachmentControl.score();
-        driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1);
-        driveTrain.fl.setPower(0.5);
-        driveTrain.fr.setPower(0.5);
-        driveTrain.bl.setPower(0.5);
-        driveTrain.br.setPower(0.5);
-        sleep(500);
-        attachmentControl.boxDoorServo.setPosition(0);
         sleep(2000);
+        driveTrain.EncoderAutoMecanumDrive(-15, 0, 0, 0.5, 1);
+        driveTrain.fl.setPower(0.35);
+        driveTrain.fr.setPower(0.35);
+        driveTrain.bl.setPower(0.35);
+        driveTrain.br.setPower(0.35);
+        sleep(1000);
+        attachmentControl.drop();
+        sleep(1000);
+        attachmentControl.lift();
+        sleep(500);
         driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 1);
-        attachmentControl.compact();
-        driveTrain.EncoderAutoMecanumDrive(0, -30, 0, 0.5, 3);
         while (attachmentControl.liftGroup.isBusy());
 
+        switch (location) {
+
+            case LEFT:
+                driveTrain.EncoderAutoMecanumDrive(0, -36, 0, 0.5, 2);
+                break;
+
+            case CENTER:
+                driveTrain.EncoderAutoMecanumDrive(0, -27, 0, 0.5, 2);
+                break;
+
+            case RIGHT:
+                driveTrain.EncoderAutoMecanumDrive(0, -16, 0, 0.5, 2);
+                break;
+
+        }
+
+        attachmentControl.compact();
 
     }
 }

@@ -188,7 +188,7 @@ public class AttachmentControl {
             extRight.setPosition(0);
             armState = ArmState.INTAKE;
             downTime.reset();
-            boxDoorServo.setPosition(0);
+            boxDoorServo.setPosition(0.38);
 
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
 
@@ -247,9 +247,9 @@ public class AttachmentControl {
 
             if (!isBPressed) {
 
-                if (boxDoorServo.getPosition() == 1) {
+                if (boxDoorServo.getPosition() > 0.43) {
 
-                    boxDoorServo.setPosition(0);
+                    boxDoorServo.setPosition(0.38);
 
                 } else {
 
@@ -302,7 +302,7 @@ public class AttachmentControl {
 
     public void drop() {
 
-        boxDoorServo.setPosition(0);
+        boxDoorServo.setPosition(0.38);
 
     }
 

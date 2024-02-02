@@ -57,7 +57,7 @@ public class StageBlue extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(0, -4, 0, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(0, -2, 0, 0.5, 1.5);
                 break;
 
             default:
@@ -72,25 +72,40 @@ public class StageBlue extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 145, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(-20, -14.25, 0, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(-18.5, -15, -1, 0.5, 1.5);
                 break;
         }
 
         attachmentControl.score();
         sleep(2000);
         driveTrain.EncoderAutoMecanumDrive(-15, 0, 0, 0.5, 1);
-        driveTrain.fl.setPower(0.15);
-        driveTrain.fr.setPower(0.15);
-        driveTrain.bl.setPower(0.15);
-        driveTrain.br.setPower(0.15);
+        driveTrain.fl.setPower(0.35);
+        driveTrain.fr.setPower(0.35);
+        driveTrain.bl.setPower(0.35);
+        driveTrain.br.setPower(0.35);
         sleep(500);
         attachmentControl.drop();
         sleep(1000);
         attachmentControl.lift();
         sleep(500);
         driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 1);
+
+        switch (location) {
+
+            case LEFT:
+                driveTrain.EncoderAutoMecanumDrive(0, 16, 0, 0.5, 2);
+                break;
+
+            case CENTER:
+                driveTrain.EncoderAutoMecanumDrive(0, 24, 0, 0.5, 2);
+                break;
+
+            case RIGHT:
+                driveTrain.EncoderAutoMecanumDrive(0, 33, 0, 0.5, 2);
+                break;
+
+        }
         attachmentControl.compact();
-        while (attachmentControl.liftGroup.isBusy());
 
     }
 }
