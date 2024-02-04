@@ -200,6 +200,8 @@ public class AttachmentControl {
 
             if (armState == ArmState.INTAKE) upTime.reset();
             armState = ArmState.SCORE_LOW;
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
             boxDoorServo.setPosition(1);
 
         } else if (gamepad2.dpad_left || gamepad1.dpad_left) {
@@ -428,7 +430,21 @@ public class AttachmentControl {
 
     public void intakeAuto() {
 
-        intakeMotor.setPower(-0.35);
+        intakeMotor.setPower(1);
+        rollerCRServo.setPower(-1);
+
+    }
+
+    public void intakeStop() {
+
+        intakeMotor.setPower(0);
+        rollerCRServo.setPower(0);
+
+    }
+
+    public void intakeSpit() {
+
+        intakeMotor.setPower(-0.5);
         rollerCRServo.setPower(1);
 
     }
