@@ -29,7 +29,7 @@ public class PropTest extends LinearOpMode {
 
         telemetryControl = new TelemetryControl(telemetry);
         attachmentControl = new AttachmentControl(hardwareMap, telemetryControl, gamepad1, gamepad2);
-        driveTrain = new DriveTrain(hardwareMap, telemetryControl, attachmentControl);
+        driveTrain = new DriveTrain(hardwareMap, telemetryControl);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);

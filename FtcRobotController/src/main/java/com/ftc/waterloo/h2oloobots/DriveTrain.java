@@ -3,13 +3,19 @@ package com.ftc.waterloo.h2oloobots;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
 public class DriveTrain {
@@ -54,6 +60,8 @@ public class DriveTrain {
     double wheelDiameter = 96 / 25.4; // inches
     double wheelCircumference = wheelDiameter * Math.PI;
 
+    BHI260IMU imu;
+
     /*
      * Track Width is the distance between the two sets of wheels (defined by the line of x below).
      *
@@ -88,13 +96,11 @@ public class DriveTrain {
      * @param hardwareMap the local HardwareMap variable from in the runOpMode() void.
      * @param telemetryControl the TelemetryControl variable initialized in the runOpMode() void.*/
     public DriveTrain(HardwareMap hardwareMap,
-                      TelemetryControl telemetryControl,
-                      AttachmentControl attachmentControl
+                      TelemetryControl telemetryControl
     ) {
 
         this.hardwareMap = hardwareMap;
         this.telemetryControl = telemetryControl;
-        this.attachmentControl = attachmentControl;
         this.FourMotorInit();
 
     }
@@ -106,13 +112,11 @@ public class DriveTrain {
     public DriveTrain(
             HardwareMap hardwareMap,
             TelemetryControl telemetryControl,
-            AttachmentControl attachmentControl,
             DcMotor.ZeroPowerBehavior zeroPowerBehavior
     ) {
 
         this.hardwareMap = hardwareMap;
         this.telemetryControl = telemetryControl;
-        this.attachmentControl = attachmentControl;
         this.FourMotorInit(zeroPowerBehavior);
 
     }
@@ -197,6 +201,24 @@ public class DriveTrain {
 //        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 //        fr.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        imu = hardwareMap.get(BHI260IMU.class, "imu");
+
+        BHI260IMU.Parameters parameters = new BHI260IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                                             RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                                             RevHubOrientationOnRobot.UsbFacingDirection.UP)
+        );
+
+        imu.initialize(parameters);
+
+    }
+
+    public void imuTelemetry() {
+
+        telemetryControl.addData("IMU Pitch", imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
+        telemetryControl.addData("IMU Yaw", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        telemetryControl.addData("IMU Roll", imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
 
     }
 
@@ -368,6 +390,9 @@ public class DriveTrain {
             br.setPower(SPEED);
             fl.setPower(SPEED);
             bl.setPower(SPEED);
+
+            this.imuTelemetry();
+            telemetryControl.update();
 
         }
 

@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.ftc.waterloo.h2oloobots.*;
 
-@Autonomous
 public abstract class H2OLooAuto extends LinearOpMode {
 
     public CameraControl.Alliance alliance;
@@ -23,7 +22,7 @@ public abstract class H2OLooAuto extends LinearOpMode {
         telemetryControl = new TelemetryControl(telemetry);
 //        odometryControl = new OdometryControl(hardwareMap, telemetryControl);
 //        attachmentControl = new AttachmentControl(hardwareMap, telemetryControl, gamepad1, gamepad2);
-        driveTrain = new DriveTrain(hardwareMap, telemetryControl, attachmentControl, DcMotor.ZeroPowerBehavior.BRAKE);
+        driveTrain = new DriveTrain(hardwareMap, telemetryControl, DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.opModeInit();
 

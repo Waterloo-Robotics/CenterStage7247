@@ -21,6 +21,7 @@ public class AudienceRed extends H2OLooAuto {
         while (opModeInInit()) {
             location = cameraControl.getLocation();
             telemetryControl.addData("Prop Location", location);
+            driveTrain.imuTelemetry();
             telemetryControl.update();
         }
 
@@ -35,7 +36,7 @@ public class AudienceRed extends H2OLooAuto {
 
             case LEFT:
 
-                driveTrain.EncoderAutoMecanumDrive(-20, 8, 0, 0.75, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(-20, 11, 0, 0.75, 1.5);
                 break;
 
             default:
@@ -58,9 +59,10 @@ public class AudienceRed extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, -11, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-30, 0, 0, 0.5, 1.75);
+                driveTrain.EncoderAutoMecanumDrive(-32, 0, 0, 0.5, 1.75);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, -26, 0, 0.5, 2);
                 break;
 
             default:
@@ -71,6 +73,7 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(-29, 0, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -87, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(-92, 0, 0, 0.5, 3.75);
+                driveTrain.EncoderAutoMecanumDrive(0, -28.5, 0, 0.5, 3.75);
                 break;
 
             case RIGHT:
@@ -89,11 +92,11 @@ public class AudienceRed extends H2OLooAuto {
         switch (location) {
 
             case LEFT:
-                driveTrain.EncoderAutoMecanumDrive(-15, -23, 0, 0.5, 1);
+                driveTrain.EncoderAutoMecanumDrive(-15, 0, 0, 0.5, 1);
                 break;
 
             case CENTER:
-                driveTrain.EncoderAutoMecanumDrive(-13, -30, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-13, 0, 3, 0.5, 2);
                 break;
 
             case RIGHT:
@@ -116,7 +119,7 @@ public class AudienceRed extends H2OLooAuto {
         switch (location) {
 
             case LEFT:
-                driveTrain.EncoderAutoMecanumDrive(0, 16, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 18, 0, 0.5, 2);
                 break;
 
             case CENTER:
