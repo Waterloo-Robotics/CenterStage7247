@@ -63,22 +63,6 @@ public class AttachmentControl {
 
         droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
-        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
-
-        liftLeft = (DcMotorEx) hardwareMap.dcMotor.get("liftLeft");
-        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftRight = (DcMotorEx) hardwareMap.dcMotor.get("liftRight");
-        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        liftGroup = new MotorControlGroupEx(liftLeft, liftRight);
-        liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
-        liftGroup.setTargetPosition(0);
-        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftGroup.setTargetPositionTolerance(80);
 
         boxServoLeft = hardwareMap.servo.get("boxServoLeft");
         boxServoLeft.setDirection(Servo.Direction.REVERSE);
@@ -101,9 +85,47 @@ public class AttachmentControl {
         hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangServo = hardwareMap.servo.get("hangServo");
         hangServo.scaleRange(0.402, 0.483);
+        intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
 
         leftTouch = hardwareMap.touchSensor.get("leftTouch");
         rightTouch = hardwareMap.touchSensor.get("rightTouch");
+
+        liftLeft = (DcMotorEx) hardwareMap.dcMotor.get("liftLeft");
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight = (DcMotorEx) hardwareMap.dcMotor.get("liftRight");
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        liftGroup = new MotorControlGroupEx(liftLeft, liftRight);
+        liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
+        liftGroup = new MotorControlGroupEx(liftLeft, liftRight);
+        liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
+        while (!leftTouch.isPressed() && !rightTouch.isPressed()) {
+
+            if (leftTouch.isPressed()) {
+
+                liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftLeft.setPower(0);
+
+            } else liftLeft.setPower(0.5);
+
+            if (rightTouch.isPressed()) {
+
+                liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftRight.setPower(0);
+
+            } else liftRight.setPower(0.5);
+
+        }
+        liftGroup.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftGroup.setTargetPosition(0);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftGroup.setTargetPositionTolerance(80);
 
     }
 
@@ -224,7 +246,7 @@ public class AttachmentControl {
 
         } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
 
-            liftGroup.setTargetPosition(-1800);
+            liftGroup.setTargetPosition(-1950);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.577);
@@ -314,6 +336,24 @@ public class AttachmentControl {
         boxServoRight.setPosition(0.51);
         liftGroup.setPower(0.5);
 
+    }
+
+    public void score2() {
+
+        extLeft.setPosition(1);
+        extRight.setPosition(1);
+
+    }
+
+    public void scoreAudience() {
+
+        liftGroup.setTargetPosition(-333);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.517);
+        boxServoRight.setPosition(0.57);
+        liftGroup.setPower(0.5);
+
         upTime.reset();
         while (upTime.seconds() < 0.5);
         extLeft.setPosition(1);
@@ -349,6 +389,19 @@ public class AttachmentControl {
         while (upTime.seconds() < 2.0);
         boxServoLeft.setPosition(0.877);
         boxServoRight.setPosition(0.877);
+
+    }
+
+    public void compactAudience() {
+
+        liftGroup.setTargetPosition(0);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.69);
+        boxServoRight.setPosition(0.69);
+        liftGroup.setPower(1);
+        extLeft.setPosition(0);
+        extRight.setPosition(0);
 
     }
 

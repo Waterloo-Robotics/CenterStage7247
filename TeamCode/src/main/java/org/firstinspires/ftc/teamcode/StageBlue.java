@@ -50,14 +50,15 @@ public class StageBlue extends H2OLooAuto {
         }
 
         attachmentControl = new AttachmentControl(hardwareMap, telemetryControl, gamepad1, gamepad2);
+        attachmentControl.score();
 
         switch (this.location) {
 
             case LEFT:
 
                 driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
+                attachmentControl.score2();
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(0, -2, 0, 0.5, 1.5);
                 break;
 
             default:
@@ -65,24 +66,23 @@ public class StageBlue extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.25);
                 driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
+                attachmentControl.score2();
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 2.5);
                 break;
 
             case RIGHT:
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, 145, 0.5, 3);
+                attachmentControl.score2();
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 145, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(-18.5, -15, -1, 0.5, 1.5);
                 break;
         }
 
-        attachmentControl.score();
-        sleep(1500);
-
         switch (location) {
 
             case LEFT:
-                driveTrain.EncoderAutoMecanumDrive(-15, 0, 0, 0.5, 1);
+                driveTrain.EncoderAutoMecanumDrive(-9, -2, 0, 0.5, 1);
                 break;
 
             case CENTER:

@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.tests;
 import com.ftc.waterloo.h2oloobots.AttachmentControl;
 import com.ftc.waterloo.h2oloobots.H2OLooAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous
 public class PickupInAutoTest extends H2OLooAuto {
 

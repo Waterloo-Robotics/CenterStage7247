@@ -70,8 +70,8 @@ public class AudienceRed extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.75);
                 driveTrain.EncoderAutoMecanumDrive(0, 18, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-29, 0, 0, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -87, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-27, 0, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(-92, 0, 0, 0.5, 3.75);
                 driveTrain.EncoderAutoMecanumDrive(0, -28.5, 0, 0.5, 3.75);
                 break;
@@ -86,7 +86,7 @@ public class AudienceRed extends H2OLooAuto {
                 break;
         }
 
-        attachmentControl.score();
+        attachmentControl.scoreAudience();
         sleep(1500);
 
         switch (location) {
@@ -111,9 +111,7 @@ public class AudienceRed extends H2OLooAuto {
         driveTrain.br.setPower(0.35);
         sleep(500);
         attachmentControl.drop();
-        sleep(1000);
-        attachmentControl.lift();
-        sleep(500);
+        sleep(1500);
         driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 1);
 
         switch (location) {

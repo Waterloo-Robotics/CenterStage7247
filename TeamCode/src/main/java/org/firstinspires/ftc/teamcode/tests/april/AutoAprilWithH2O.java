@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.tests.april;
 import com.acmerobotics.dashboard.config.Config;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.ftc.waterloo.h2oloobots.CameraControl;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.ftc.waterloo.h2oloobots.*;
 
+@Disabled
 @Config
 @TeleOp
 public class AutoAprilWithH2O extends H2OLooTeleOp {
