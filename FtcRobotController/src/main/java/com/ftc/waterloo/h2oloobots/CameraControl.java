@@ -514,7 +514,7 @@ class BluePropPipeline extends OpenCvPipeline {
 
             // Iterate and check whether the bounding boxes
             // cover left and/or right side of the image
-            double left_x = 0.25 * width;
+            double left_x = 0.18 * width;
             double right_x = 0.825 * width;
             boolean left = false; // true if regular stone found on the left side
             boolean right = false; // "" "" on the right side

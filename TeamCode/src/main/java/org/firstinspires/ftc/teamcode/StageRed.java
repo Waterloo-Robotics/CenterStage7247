@@ -84,7 +84,7 @@ public class StageRed extends H2OLooAuto {
                 break;
 
             case CENTER:
-                driveTrain.EncoderAutoMecanumDrive(-19, 4, 3, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-19, 2, 3, 0.5, 2);
                 break;
 
             case RIGHT:
@@ -115,7 +115,7 @@ public class StageRed extends H2OLooAuto {
                 break;
 
             case RIGHT:
-                driveTrain.EncoderAutoMecanumDrive(0, -16, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, -22, 0, 0.5, 2);
                 break;
 
         }

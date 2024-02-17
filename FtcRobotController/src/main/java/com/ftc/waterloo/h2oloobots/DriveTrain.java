@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Axis;
 
 @Config
 public class DriveTrain {
@@ -61,6 +63,7 @@ public class DriveTrain {
     double wheelCircumference = wheelDiameter * Math.PI;
 
     BHI260IMU imu;
+    public static double imuTurn_P = 0.02;
 
     /*
      * Track Width is the distance between the two sets of wheels (defined by the line of x below).
@@ -216,9 +219,7 @@ public class DriveTrain {
 
     public void imuTelemetry() {
 
-        telemetryControl.addData("IMU Pitch", imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
-        telemetryControl.addData("IMU Yaw", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetryControl.addData("IMU Roll", imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
+        telemetryControl.addData("IMU Yaw", this.getImuAngle());
 
     }
 
@@ -391,8 +392,8 @@ public class DriveTrain {
             fl.setPower(SPEED);
             bl.setPower(SPEED);
 
-            this.imuTelemetry();
-            telemetryControl.update();
+//            this.imuTelemetry();
+//            telemetryControl.update();
 
         }
 
@@ -412,12 +413,147 @@ public class DriveTrain {
 
     }
 
+    public void imuTurn(double DEGREES, double CANCEL_TIME_SECONDS) {
+
+        double error = 0;
+        double startIMUPosition = getImuAngle();
+        double distanceTravelled = getImuAngle() - startIMUPosition;
+        double motorPower = 0;
+        ElapsedTime cancelTime = new ElapsedTime();
+        cancelTime.reset();
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        while (this.round(distanceTravelled, 1) > (DEGREES + 0.5) ||
+                this.round(distanceTravelled, 1) < (DEGREES - 0.5)) {
+            distanceTravelled = getImuAngle() - startIMUPosition;
+            if (DEGREES - distanceTravelled > 180.0) {
+
+                error = (DEGREES) + distanceTravelled;
+
+            } else {
+
+                error = DEGREES - distanceTravelled;
+
+            }
+
+            motorPower = error * imuTurn_P;
+
+            if (Math.abs(motorPower) > 0.7) {
+
+                motorPower = 0.7 * Math.signum(motorPower);
+
+            } else if (Math.abs(motorPower) < 0.2) {
+
+                motorPower = 0.2 * Math.signum(motorPower);
+
+            }
+
+            telemetryControl.addData("IMU Degrees", distanceTravelled);
+            telemetryControl.addData("Motor Power", motorPower);
+            telemetryControl.update();
+
+            fl.setPower(motorPower);
+            fr.setPower(-motorPower);
+            bl.setPower(motorPower);
+            br.setPower(-motorPower);
+
+        }
+
+    }
+
+    public void imuAbsTurn(double DEGREES, double CANCEL_TIME_SECONDS) {
+
+        double error = 0;
+        double distanceTravelled = getImuAngle();
+        double motorPower = 0;
+        boolean isStaticRestarted = false;
+        ElapsedTime cancelTime = new ElapsedTime();
+        ElapsedTime staticTime = new ElapsedTime();
+        cancelTime.reset();
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        while (((this.round(distanceTravelled, 3) > (DEGREES + 0.125) ||
+                this.round(distanceTravelled, 3) < (DEGREES - 0.125)) &&
+                (staticTime.seconds() < 0.5 || !isStaticRestarted)) &&
+                cancelTime.seconds() < CANCEL_TIME_SECONDS) {
+            distanceTravelled = getImuAngle();
+            if (DEGREES - distanceTravelled > 180.0) {
+
+                error = (DEGREES) + distanceTravelled;
+
+            } else {
+
+                error = DEGREES - distanceTravelled;
+
+            }
+
+            if (Math.abs(error) < 0.25) {
+
+                if (!isStaticRestarted) staticTime.reset();
+                isStaticRestarted = true;
+
+            } else isStaticRestarted = false;
+
+            motorPower = error * imuTurn_P;
+
+            if (Math.abs(motorPower) > 0.85) {
+
+                motorPower = 0.85 * Math.signum(motorPower);
+
+            } else if (Math.abs(motorPower) < 0.25) {
+
+                motorPower = 0.25 * Math.signum(motorPower);
+
+            }
+
+            telemetryControl.addData("IMU Degrees", distanceTravelled);
+            telemetryControl.addData("Error", error);
+            telemetryControl.addData("", "");
+            telemetryControl.addData("Motor Power", motorPower);
+            telemetryControl.update();
+
+            fl.setPower(motorPower);
+            fr.setPower(-motorPower);
+            bl.setPower(motorPower);
+            br.setPower(-motorPower);
+
+        }
+
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
+
+    }
+
+    public double getImuAngle() {
+
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+    }
+
     public void driveEncoderRawTelemetry() {
 
         telemetryControl.addData("Front Left Position", fl.getCurrentPosition());
         telemetryControl.addData("Front Right Position", fr.getCurrentPosition());
         telemetryControl.addData("Back Left Position", bl.getCurrentPosition());
         telemetryControl.addData("Back Right Position", br.getCurrentPosition());
+
+    }
+
+    double round(double number, int decimalPoints) {
+
+        double intNumber = number * Math.pow(10, decimalPoints);
+        Math.round(intNumber);
+        double finalNumber = intNumber / Math.pow(10, decimalPoints);
+
+        return finalNumber;
 
     }
 

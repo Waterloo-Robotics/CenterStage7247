@@ -67,7 +67,7 @@ public class StageBlue extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.25);
                 driveTrain.EncoderAutoMecanumDrive(0, 22, 0, 0.5, 2.5);
                 attachmentControl.score2();
-                driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 2.5);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, 85, 0.5, 2.5);
                 break;
 
             case RIGHT:

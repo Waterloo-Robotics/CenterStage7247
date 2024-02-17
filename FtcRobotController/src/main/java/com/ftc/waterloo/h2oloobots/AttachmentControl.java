@@ -338,24 +338,40 @@ public class AttachmentControl {
 
     }
 
-    public void score2() {
+    public void scoreAudience() {
 
+        liftGroup.setTargetPosition(0);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.69);
+        boxServoRight.setPosition(0.69);
+        liftGroup.setPower(0.5);
+
+        upTime.reset();
+        while (upTime.seconds() < 0.5);
         extLeft.setPosition(1);
         extRight.setPosition(1);
 
     }
 
-    public void scoreAudience() {
+    public void scoreAudience2() {
 
         liftGroup.setTargetPosition(-333);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangServo.setPosition(0);
         boxServoLeft.setPosition(0.517);
-        boxServoRight.setPosition(0.57);
+        boxServoRight.setPosition(0.517);
         liftGroup.setPower(0.5);
 
         upTime.reset();
         while (upTime.seconds() < 0.5);
+        extLeft.setPosition(1);
+        extRight.setPosition(1);
+
+    }
+
+    public void score2() {
+
         extLeft.setPosition(1);
         extRight.setPosition(1);
 
