@@ -19,6 +19,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -323,6 +324,26 @@ class RedPropPipeline extends OpenCvPipeline {
         Scalar upperRed = new Scalar(15, 255, 255);
         Scalar lowerRed = new Scalar(0, 50, 25);
         Mat thresh = new Mat();
+        //Circle detection
+        Mat grey = new Mat();
+        Imgproc.cvtColor(input, grey, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.medianBlur(grey, grey, 5);
+        Mat circles = new Mat();
+
+        Imgproc.HoughCircles(grey, circles, Imgproc.HOUGH_GRADIENT, 1.0,
+                (double)grey.rows()/16, // change this value to detect circles with different distances to each other
+                100.0, 30.0, 1, 30); // change the last two parameters
+        // (min_radius & max_radius) to detect larger circles
+        for (int x = 0; x < circles.cols(); x++) {
+            double[] c = circles.get(0, x);
+            Point center = new Point(Math.round(c[0]), Math.round(c[1]));
+            // circle center
+            Imgproc.circle(input, center, 1, new Scalar(0,100,100), 3, 8, 0 );
+            // circle outline
+            int radius = (int) Math.round(c[2]);
+            Imgproc.circle(input, center, radius, new Scalar(255,0,255), 3, 8, 0 );
+        }
+
 
         // We'll get a black and white image. The white regions represent the regular stones.
         // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
