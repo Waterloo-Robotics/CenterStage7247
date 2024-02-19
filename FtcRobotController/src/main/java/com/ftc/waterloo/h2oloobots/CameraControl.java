@@ -349,12 +349,11 @@ class RedPropPipeline extends OpenCvPipeline {
             for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
 
                 double contourArea = Imgproc.contourArea(contours.get(contourIdx));
-
-                if (maxVal < contourArea) {
-                    maxVal = contourArea;
-                    maxValIdx = contourIdx;
-                }
-
+                if (Imgproc.isContourConvex(contours.get(contourIdx)) == true) {
+                    if (maxVal < contourArea) {
+                        maxVal = contourArea;
+                        maxValIdx = contourIdx;
+                    }
             }
 //        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
             Imgproc.drawContours(input, contours, maxValIdx, new Scalar(255, 0, 0));
