@@ -24,7 +24,7 @@ public class AttachmentControl {
 
     Servo droneServo;
 
-    CRServo rollerCRServo;
+    CRServo rollerCRServo, boxServoCenter;
 
     DcMotor intakeMotor;
     public DcMotorEx liftLeft, liftRight;
@@ -60,7 +60,7 @@ public class AttachmentControl {
         this.telemetryControl = telemetryControl;
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
-
+        boxServoCenter = hardwareMap.crservo.get("boxServoCenter");
         droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
 
@@ -477,18 +477,20 @@ public class AttachmentControl {
 
         if (gamepad1.right_bumper) {
 
+            boxServoCenter.setPower(1);
             intakeMotor.setPower(1);
             rollerCRServo.setPower(-1);
             lastRightBumper = true;
 
         } else if (gamepad1.left_bumper) {
 
+
             lastLeftBumper = true;
             intakeMotor.setPower(-0.5);
             rollerCRServo.setPower(1);
 
         } else {
-
+            boxServoCenter.setPower(0);
             intakeMotor.setPower(0);
             rollerCRServo.setPower(0);
             lastLeftBumper = false;
