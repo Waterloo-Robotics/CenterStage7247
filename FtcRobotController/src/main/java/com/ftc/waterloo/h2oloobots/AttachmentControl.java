@@ -24,7 +24,7 @@ public class AttachmentControl {
 
     Servo droneServo;
 
-    CRServo rollerCRServo, boxServoCenter;
+    CRServo rollerCRServo, boxWheel;
 
     DcMotor intakeMotor;
     public DcMotorEx liftLeft, liftRight;
@@ -42,12 +42,14 @@ public class AttachmentControl {
     boolean isGP2APressed = false;
     boolean isBPressed = false;
     TouchSensor leftTouch, rightTouch;
+    ElapsedTime boxWheelTime = new ElapsedTime();
+    boolean boxWheelStarted = false;
 
     public enum ArmState {
 
         INTAKE,
+        SCORE_MED,
         SCORE_LOW,
-        SCORE_MID,
         SCORE_HIGH
 
     }
@@ -60,7 +62,7 @@ public class AttachmentControl {
         this.telemetryControl = telemetryControl;
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
-        boxServoCenter = hardwareMap.crservo.get("boxServoCenter");
+        boxWheel = hardwareMap.crservo.get("boxServoCenter");
         droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
 
@@ -215,54 +217,53 @@ public class AttachmentControl {
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
 
             upTime.reset();
-            armState = ArmState.SCORE_MID;
-            boxDoorServo.setPosition(1);
+            armState = ArmState.SCORE_LOW;
+            boxDoorServo.setPosition(0.38);
 
         } else if (gamepad2.dpad_right || gamepad1.dpad_right) {
 
             if (armState == ArmState.INTAKE) upTime.reset();
-            armState = ArmState.SCORE_LOW;
-            boxServoLeft.setPosition(0.51);
-            boxServoRight.setPosition(0.51);
-            boxDoorServo.setPosition(1);
+            armState = ArmState.SCORE_MED;
+            liftGroup.setTargetPosition(-1200);
+            boxDoorServo.setPosition(0.38);
 
         } else if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
             if (armState == ArmState.INTAKE) upTime.reset();
             armState = ArmState.SCORE_HIGH;
-            boxDoorServo.setPosition(1);
+            boxDoorServo.setPosition(0.38);
 
         }
 
-        if (armState == ArmState.SCORE_MID && upTime.seconds() > 0.5) {
+        if (armState == ArmState.SCORE_LOW && upTime.seconds() > 0.5) {
 
             liftGroup.setTargetPosition(-750);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.5);
             boxServoRight.setPosition(0.5);
-            boxServoLeft.setPosition(0.577);
-            boxServoRight.setPosition(0.577);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
 
         } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
 
             liftGroup.setTargetPosition(-1950);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
-            boxServoLeft.setPosition(0.577);
-            boxServoRight.setPosition(0.577);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
 
-        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
+        } else if (armState == ArmState.SCORE_MED && upTime.seconds() > 0.5) {
 
-            liftGroup.setTargetPosition(0);
+            liftGroup.setTargetPosition(-1200);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hangServo.setPosition(0);
-            boxServoLeft.setPosition(0.43);
-            boxServoRight.setPosition(0.43);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
 
         }
 
-        if (armState == ArmState.SCORE_MID && upTime.seconds() > 1) {
+        if (armState == ArmState.SCORE_LOW && upTime.seconds() > 1) {
 
             extLeft.setPosition(1);
             extRight.setPosition(1);
@@ -272,7 +273,7 @@ public class AttachmentControl {
             extLeft.setPosition(1);
             extRight.setPosition(1);
 
-        } else if (armState == ArmState.SCORE_LOW && upTime.seconds() > 1) {
+        } else if (armState == ArmState.SCORE_MED && upTime.seconds() > 1) {
 
             extLeft.setPosition(1);
             extRight.setPosition(1);
@@ -283,30 +284,6 @@ public class AttachmentControl {
 
             boxServoLeft.setPosition(0.877);
             boxServoRight.setPosition(0.877);
-
-        }
-
-        if (gamepad1.b) {
-
-            if (!isBPressed) {
-
-                if (boxDoorServo.getPosition() > 0.43) {
-
-                    boxDoorServo.setPosition(0.38);
-
-                } else {
-
-                    boxDoorServo.setPosition(1);
-
-                }
-
-            }
-
-            isBPressed = true;
-
-        } else {
-
-            isBPressed = false;
 
         }
 
@@ -477,7 +454,7 @@ public class AttachmentControl {
 
         if (gamepad1.right_bumper) {
 
-            boxServoCenter.setPower(1);
+            boxWheel.setPower(1);
             intakeMotor.setPower(1);
             rollerCRServo.setPower(-1);
             lastRightBumper = true;
@@ -490,10 +467,43 @@ public class AttachmentControl {
             rollerCRServo.setPower(1);
 
         } else {
-            boxServoCenter.setPower(0);
+            boxWheel.setPower(0);
             intakeMotor.setPower(0);
             rollerCRServo.setPower(0);
             lastLeftBumper = false;
+
+        }
+
+
+
+        if (gamepad1.b) {
+
+            if (!isBPressed) {
+
+                boxWheelTime.reset();
+                boxWheelStarted = true;
+
+            }
+
+            isBPressed = true;
+
+        } else {
+
+            isBPressed = false;
+
+        }
+
+        if (boxWheelStarted && boxWheelTime.seconds() < 0.25) {
+
+            boxWheel.setPower(-0.5);
+
+        } else if (gamepad1.right_bumper) {
+
+            boxWheel.setPower(1);
+
+        } else {
+
+            boxWheel.setPower(0);
 
         }
 
@@ -528,7 +538,6 @@ public class AttachmentControl {
         while (time.seconds() < 1.25) {
 
             intakeMotor.setPower(-0.15);
-
         }
 
         intakeMotor.setPower(0);

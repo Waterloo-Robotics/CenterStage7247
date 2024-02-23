@@ -63,7 +63,7 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(-32, 0, 0, 0.5, 1.75);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 2);
                 attachmentControl.scoreAudience();
-                sleep(6000);
+                sleep(8000);
                 driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 3);
                 attachmentControl.scoreAudience2();
                 driveTrain.EncoderAutoMecanumDrive(0, -24, 0, 0.5, 2);
@@ -77,7 +77,7 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(-27, 0, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 2);
                 attachmentControl.scoreAudience();
-                sleep(6000);
+                sleep(8000);
                 driveTrain.EncoderAutoMecanumDrive(-92, 0, 0, 0.5, 3.75);
                 attachmentControl.scoreAudience2();
                 driveTrain.EncoderAutoMecanumDrive(0, -29, 0, 0.5, 3.75);
@@ -90,7 +90,7 @@ public class AudienceRed extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(-26, 0, 0, 0.5, 1.25);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -92, 0.5, 2);
                 attachmentControl.scoreAudience();
-                sleep(6000);
+                sleep(8000);
                 driveTrain.EncoderAutoMecanumDrive(-78, 0, 0, 0.5, 3);
                 attachmentControl.scoreAudience2();
                 driveTrain.EncoderAutoMecanumDrive(0, -42, 0, 0.5, 3);

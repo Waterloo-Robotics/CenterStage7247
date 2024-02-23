@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+//@Disabled
 @TeleOp
 public class CameraTestWithoutDTOrAttachments extends OpMode {
 
@@ -16,7 +16,7 @@ public class CameraTestWithoutDTOrAttachments extends OpMode {
     public void init() {
 
         telemetryControl = new TelemetryControl(telemetry);
-        cameraControl = new CameraControl(hardwareMap, telemetryControl, CameraControl.Alliance.BLUE, gamepad1, gamepad2);
+        cameraControl = new CameraControl(hardwareMap, telemetryControl, CameraControl.Alliance.RED, gamepad1, gamepad2);
 
     }
 
