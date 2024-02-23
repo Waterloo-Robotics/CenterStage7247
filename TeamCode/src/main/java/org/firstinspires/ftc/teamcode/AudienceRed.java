@@ -21,6 +21,7 @@ public class AudienceRed extends H2OLooAuto {
         while (opModeInInit()) {
             location = cameraControl.getLocation();
             telemetryControl.addData("Prop Location", location);
+            driveTrain.imuTelemetry();
             telemetryControl.update();
         }
 
@@ -28,6 +29,7 @@ public class AudienceRed extends H2OLooAuto {
 
     @Override
     public void opModePeriodic() {
+        time.reset();
 
         cameraControl.close();
 
@@ -41,7 +43,7 @@ public class AudienceRed extends H2OLooAuto {
             default:
             case CENTER:
 
-                driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1.25);
+                driveTrain.EncoderAutoMecanumDrive(-25, 0, 0, 0.5, 1.25);
                 break;
 
             case RIGHT:
@@ -58,10 +60,13 @@ public class AudienceRed extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, -11, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-30, 0, 0, 0.5, 1.75);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -83, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-32, 0, 0, 0.5, 1.75);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 2);
+                attachmentControl.scoreAudience();
+                sleep(8000);
                 driveTrain.EncoderAutoMecanumDrive(-72, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, -32, 0, 0.5, 2);
+                attachmentControl.scoreAudience2();
+                driveTrain.EncoderAutoMecanumDrive(0, -24, 0, 0.5, 2);
                 break;
 
             default:
@@ -69,42 +74,72 @@ public class AudienceRed extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.75);
                 driveTrain.EncoderAutoMecanumDrive(0, 18, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-29, 0, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-27, 0, 0, 0.5, 2);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(-84, 0, 0, 0.5, 6);
-                driveTrain.EncoderAutoMecanumDrive(0, -33, 0, 0.5, 2);
+                attachmentControl.scoreAudience();
+                sleep(8000);
+                driveTrain.EncoderAutoMecanumDrive(-92, 0, 0, 0.5, 3.75);
+                attachmentControl.scoreAudience2();
+                driveTrain.EncoderAutoMecanumDrive(0, -29, 0, 0.5, 3.75);
                 break;
 
             case RIGHT:
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 70, 0.5, 1.25);
-                driveTrain.EncoderAutoMecanumDrive(-30, 0, 0, 0.5, 1.25);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -90, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-26, 0, 0, 0.5, 1.25);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -92, 0.5, 2);
+                attachmentControl.scoreAudience();
+                sleep(8000);
                 driveTrain.EncoderAutoMecanumDrive(-78, 0, 0, 0.5, 3);
-                driveTrain.EncoderAutoMecanumDrive(0, -35, 0, 0.5, 2);
+                attachmentControl.scoreAudience2();
+                driveTrain.EncoderAutoMecanumDrive(0, -42, 0, 0.5, 3);
                 break;
         }
 
-//        cameraControl.initAprilTag(hardwareMap);
+        switch (location) {
 
-//        time.reset();
-//        while (time.seconds() < 1.5) {
-//            cameraControl.followAprilTagAuto(driveTrain);
-//        }
-        attachmentControl.score();
-        driveTrain.EncoderAutoMecanumDrive(-24, 0, 0, 0.5, 1);
-        driveTrain.fl.setPower(0.5);
-        driveTrain.fr.setPower(0.5);
-        driveTrain.bl.setPower(0.5);
-        driveTrain.br.setPower(0.5);
+            case LEFT:
+                driveTrain.EncoderAutoMecanumDrive(-6, 0, 0, 0.5, 1);
+                break;
+
+            case CENTER:
+                driveTrain.EncoderAutoMecanumDrive(-6, 0, 3, 0.5, 2);
+                break;
+
+            case RIGHT:
+                driveTrain.EncoderAutoMecanumDrive(-6, 0, 0, 0.5, 1);
+                break;
+
+        }
+
+        driveTrain.fl.setPower(0.35);
+        driveTrain.fr.setPower(0.35);
+        driveTrain.bl.setPower(0.35);
+        driveTrain.br.setPower(0.35);
         sleep(500);
-        attachmentControl.boxDoorServo.setPosition(0);
-        sleep(2000);
+        attachmentControl.drop();
+        sleep(1000);
+        attachmentControl.lift();
+        sleep(500);
         driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 1);
+
+        switch (location) {
+
+            case LEFT:
+                driveTrain.EncoderAutoMecanumDrive(0, 18, 0, 0.5, (28.0 - time.seconds()));
+                break;
+
+            case CENTER:
+                driveTrain.EncoderAutoMecanumDrive(0, 24, 0, 0.5, (28.0 - time.seconds()));
+                break;
+
+            case RIGHT:
+                driveTrain.EncoderAutoMecanumDrive(0, 33, 0, 0.5, (28.0 - time.seconds()));
+                break;
+
+        }
         attachmentControl.compact();
-        driveTrain.EncoderAutoMecanumDrive(0, 26, 0, 0.5, 3);
-        while (attachmentControl.liftGroup.isBusy());
 
     }
 }

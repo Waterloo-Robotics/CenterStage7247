@@ -24,36 +24,73 @@ public class AttachmentControl {
 
     Servo droneServo;
 
-    CRServo rollerCRServo;
+    CRServo rollerCRServo, boxWheel;
 
     DcMotor intakeMotor;
     public DcMotorEx liftLeft, liftRight;
     public MotorControlGroupEx liftGroup;
-    Servo boxServoLeft, boxServoRight;
+    Servo boxServoLeft, boxServoRight, extLeft, extRight;
     public Servo boxDoorServo;
     boolean lastRightBumper = false;
     boolean lastLeftBumper = false;
-    boolean isGoingUp = false;
-    boolean isGoingUpUp = false;
     ElapsedTime upTime = new ElapsedTime();
+    ElapsedTime downTime = new ElapsedTime();
     ElapsedTime upDoublePressTime = new ElapsedTime();
     boolean isUpPressedOnce = true;
-    DcMotor hangMotor;
+    public DcMotor hangMotor;
     Servo hangServo;
     boolean isGP2APressed = false;
     boolean isBPressed = false;
-    boolean isDpadUpPressed = false;
     TouchSensor leftTouch, rightTouch;
+    ElapsedTime boxWheelTime = new ElapsedTime();
+    boolean boxWheelStarted = false;
+
+    public enum ArmState {
+
+        INTAKE,
+        SCORE_MED,
+        SCORE_LOW,
+        SCORE_HIGH
+
+    }
+
+    ArmState armState = ArmState.INTAKE;
+
 
     public AttachmentControl(HardwareMap hardwareMap, TelemetryControl telemetryControl, Gamepad gamepad1, Gamepad gamepad2) {
 
         this.telemetryControl = telemetryControl;
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
-
-//        droneServo = hardwareMap.servo.get("droneServo");
+        boxWheel = hardwareMap.crservo.get("boxServoCenter");
+        droneServo = hardwareMap.servo.get("droneServo");
         rollerCRServo = hardwareMap.crservo.get("rollerCRServo");
+
+        boxServoLeft = hardwareMap.servo.get("boxServoLeft");
+        boxServoLeft.setDirection(Servo.Direction.REVERSE);
+//        boxServoLeft.scaleRange(0, 0.686);
+        boxServoLeft.setPosition(0.877);
+        boxServoRight = hardwareMap.servo.get("boxServoRight");
+//        boxServoRight.scaleRange(0, 0.686);
+        boxServoRight.setPosition(0.877);
+        boxDoorServo = hardwareMap.servo.get("boxDoorServo");
+        boxDoorServo.scaleRange(0, 0.5);
+
+        extLeft = hardwareMap.servo.get("extLeft");
+        extLeft.scaleRange(0.23, 0.82);
+        extLeft.setPosition(0);
+        extRight = hardwareMap.servo.get("extRight");
+        extRight.scaleRange(0.23, 0.82);
+        extRight.setPosition(0);
+
+        hangMotor = hardwareMap.dcMotor.get("hangMotor");
+        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangServo = hardwareMap.servo.get("hangServo");
+        hangServo.scaleRange(0.402, 0.483);
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+
+        leftTouch = hardwareMap.touchSensor.get("leftTouch");
+        rightTouch = hardwareMap.touchSensor.get("rightTouch");
 
         liftLeft = (DcMotorEx) hardwareMap.dcMotor.get("liftLeft");
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -66,27 +103,31 @@ public class AttachmentControl {
 
         liftGroup = new MotorControlGroupEx(liftLeft, liftRight);
         liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
+        liftGroup = new MotorControlGroupEx(liftLeft, liftRight);
+        liftGroup.setDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
+        while (!leftTouch.isPressed() && !rightTouch.isPressed()) {
+
+            if (leftTouch.isPressed()) {
+
+                liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftLeft.setPower(0);
+
+            } else liftLeft.setPower(0.5);
+
+            if (rightTouch.isPressed()) {
+
+                liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftRight.setPower(0);
+
+            } else liftRight.setPower(0.5);
+
+        }
+        liftGroup.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftGroup.setTargetPosition(0);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftGroup.setTargetPositionTolerance(80);
-
-        boxServoLeft = hardwareMap.servo.get("boxServoLeft");
-        boxServoLeft.setDirection(Servo.Direction.REVERSE);
-//        boxServoLeft.scaleRange(0, 0.686);
-        boxServoLeft.setPosition(0.686);
-        boxServoRight = hardwareMap.servo.get("boxServoRight");
-//        boxServoRight.scaleRange(0, 0.686);
-        boxServoRight.setPosition(0.686);
-        boxDoorServo = hardwareMap.servo.get("boxDoorServo");
-        boxDoorServo.scaleRange(0.585, 1);
-
-        hangMotor = hardwareMap.dcMotor.get("hangMotor");
-        hangMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hangServo = hardwareMap.servo.get("hangServo");
-        hangServo.scaleRange(0.402, 0.483);
-
-        leftTouch = hardwareMap.touchSensor.get("leftTouch");
-        rightTouch = hardwareMap.touchSensor.get("rightTouch");
 
     }
 
@@ -94,6 +135,29 @@ public class AttachmentControl {
 
         telemetryControl.addData("Left Touch", leftTouch.isPressed());
         telemetryControl.addData("Right Touch", rightTouch.isPressed());
+
+    }
+
+    public void extManual() {
+
+        if (gamepad1.a) {
+
+//            extRight.setPosition(extRight.getPosition() + 1.0);
+//            extLeft.setPosition(extLeft.getPosition() + 1.0);
+            extRight.setPosition(1);
+            extLeft.setPosition(1);
+
+        } else if (gamepad1.b) {
+
+//            extRight.setPosition(extRight.getPosition() - 0.5);
+//            extLeft.setPosition(extLeft.getPosition() -0.5);
+            extRight.setPosition(0);
+            extLeft.setPosition(0);
+
+        }
+
+        telemetryControl.addData("ExtLeft Servo Position", extLeft.getPosition());
+        telemetryControl.addData("ExtRight Servo Position", extRight.getPosition());
 
     }
 
@@ -113,11 +177,11 @@ public class AttachmentControl {
 
         if (gamepad2.left_bumper) {
 
-            boxDoorServo.setPosition(boxDoorServo.getPosition() + 0.003);
+            boxDoorServo.setPosition(boxDoorServo.getPosition() + 0.01);
 
         } else if (gamepad2.right_bumper) {
 
-            boxDoorServo.setPosition(boxDoorServo.getPosition() - 0.003);
+            boxDoorServo.setPosition(boxDoorServo.getPosition() - 0.01);
 
         }
 
@@ -131,6 +195,7 @@ public class AttachmentControl {
         liftGroup.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftGroup.setPower(gamepad2.left_stick_y);
+        liftGroup.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetryControl.addData("Lift Group Position", liftGroup.getCurrentPosition());
 
     }
@@ -141,94 +206,84 @@ public class AttachmentControl {
 
             liftGroup.setTargetPosition(0);
             hangServo.setPosition(0);
-            boxServoLeft.setPosition(0.686);
-            boxServoRight.setPosition(0.686);
-            boxDoorServo.setPosition(0);
-            isGoingUp = false;
-            isGoingUpUp = false;
+            boxServoLeft.setPosition(0.69);
+            boxServoRight.setPosition(0.69);
+            extLeft.setPosition(0);
+            extRight.setPosition(0);
+            armState = ArmState.INTAKE;
+            downTime.reset();
+            boxDoorServo.setPosition(0.38);
 
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
+
             upTime.reset();
+            armState = ArmState.SCORE_LOW;
+            boxDoorServo.setPosition(0.38);
 
-            if (!isDpadUpPressed) {
+        } else if (gamepad2.dpad_right || gamepad1.dpad_right) {
 
-                if (!isUpPressedOnce || upDoublePressTime.seconds() > 0.5) {
+            if (armState == ArmState.INTAKE) upTime.reset();
+            armState = ArmState.SCORE_MED;
+            liftGroup.setTargetPosition(-1200);
+            boxDoorServo.setPosition(0.38);
 
-                    isUpPressedOnce = true;
-                    upDoublePressTime.reset();
-                    isGoingUp = true;
-                    isGoingUpUp = false;
+        } else if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
-                } else if (isUpPressedOnce && upDoublePressTime.seconds() <= 0.5) {
-
-                    isGoingUpUp = true;
-                    isGoingUp = false;
-                    isUpPressedOnce = false;
-
-                } else {
-
-                    isUpPressedOnce = false;
-
-                }
-
-            }
-
-            isDpadUpPressed = true;
-            boxDoorServo.setPosition(1);
+            if (armState == ArmState.INTAKE) upTime.reset();
+            armState = ArmState.SCORE_HIGH;
+            boxDoorServo.setPosition(0.38);
 
         }
-        isDpadUpPressed = gamepad1.dpad_up || gamepad2.dpad_up;
-        if (isGoingUp && upTime.seconds() > 0.5) {
+
+        if (armState == ArmState.SCORE_LOW && upTime.seconds() > 0.5) {
+
+            liftGroup.setTargetPosition(-750);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.5);
+            boxServoRight.setPosition(0.5);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
+
+        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
+
+            liftGroup.setTargetPosition(-1950);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
+
+        } else if (armState == ArmState.SCORE_MED && upTime.seconds() > 0.5) {
 
             liftGroup.setTargetPosition(-1200);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
-            boxServoLeft.setPosition(0.287);
-            boxServoRight.setPosition(0.356);
-            isGoingUp = false;
-            isGoingUpUp = false;
-
-        } else if (isGoingUpUp && upTime.seconds() > 0.5) {
-
-            liftGroup.setTargetPosition(-1800);
-            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hangServo.setPosition(0.84);
-            boxServoLeft.setPosition(0.287);
-            boxServoRight.setPosition(0.356);
-            isGoingUpUp = false;
-            isGoingUp = false;
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
 
         }
 
-        if (gamepad1.dpad_right) {
+        if (armState == ArmState.SCORE_LOW && upTime.seconds() > 1) {
 
-            boxServoLeft.setPosition(0.686);
-            boxServoRight.setPosition(0.686);
-            boxDoorServo.setPosition(0);
+            extLeft.setPosition(1);
+            extRight.setPosition(1);
+
+        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 1) {
+
+            extLeft.setPosition(1);
+            extRight.setPosition(1);
+
+        } else if (armState == ArmState.SCORE_MED && upTime.seconds() > 1) {
+
+            extLeft.setPosition(1);
+            extRight.setPosition(1);
 
         }
 
-        if (gamepad1.b) {
+        if (armState == ArmState.INTAKE && downTime.seconds() > 2.0) {
 
-            if (!isBPressed) {
-
-                if (boxDoorServo.getPosition() == 1) {
-
-                    boxDoorServo.setPosition(0);
-
-                } else {
-
-                    boxDoorServo.setPosition(1);
-
-                }
-
-            }
-
-            isBPressed = true;
-
-        } else {
-
-            isBPressed = false;
+            boxServoLeft.setPosition(0.877);
+            boxServoRight.setPosition(0.877);
 
         }
 
@@ -251,13 +306,64 @@ public class AttachmentControl {
 
     public void score() {
 
-        boxDoorServo.setPosition(1);
-        liftGroup.setTargetPosition(-1200);
+        liftGroup.setTargetPosition(0);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hangServo.setPosition(0.84);
-        boxServoLeft.setPosition(0.287);
-        boxServoRight.setPosition(0.356);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.51);
+        boxServoRight.setPosition(0.51);
         liftGroup.setPower(0.5);
+
+    }
+
+    public void scoreAudience() {
+
+        liftGroup.setTargetPosition(0);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.69);
+        boxServoRight.setPosition(0.69);
+        liftGroup.setPower(0.5);
+
+        upTime.reset();
+        while (upTime.seconds() < 0.5);
+        extLeft.setPosition(1);
+        extRight.setPosition(1);
+
+    }
+
+    public void scoreAudience2() {
+
+        liftGroup.setTargetPosition(-333);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.517);
+        boxServoRight.setPosition(0.517);
+        liftGroup.setPower(0.5);
+
+        upTime.reset();
+        while (upTime.seconds() < 0.5);
+        extLeft.setPosition(1);
+        extRight.setPosition(1);
+
+    }
+
+    public void score2() {
+
+        extLeft.setPosition(1);
+        extRight.setPosition(1);
+
+    }
+
+    public void drop() {
+
+        boxDoorServo.setPosition(0.38);
+
+    }
+
+    public void lift() {
+
+        boxServoLeft.setPosition(0.43);
+        boxServoRight.setPosition(0.43);
 
     }
 
@@ -266,10 +372,29 @@ public class AttachmentControl {
         liftGroup.setTargetPosition(0);
         liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangServo.setPosition(0);
-        boxServoLeft.setPosition(0.686);
-        boxServoRight.setPosition(0.686);
-        boxDoorServo.setPosition(0);
+        boxServoLeft.setPosition(0.69);
+        boxServoRight.setPosition(0.69);
         liftGroup.setPower(1);
+        extLeft.setPosition(0);
+        extRight.setPosition(0);
+
+        upTime.reset();
+        while (upTime.seconds() < 2.0);
+        boxServoLeft.setPosition(0.877);
+        boxServoRight.setPosition(0.877);
+
+    }
+
+    public void compactAudience() {
+
+        liftGroup.setTargetPosition(0);
+        liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangServo.setPosition(0);
+        boxServoLeft.setPosition(0.69);
+        boxServoRight.setPosition(0.69);
+        liftGroup.setPower(1);
+        extLeft.setPosition(0);
+        extRight.setPosition(0);
 
     }
 
@@ -329,21 +454,56 @@ public class AttachmentControl {
 
         if (gamepad1.right_bumper) {
 
+            boxWheel.setPower(1);
             intakeMotor.setPower(1);
             rollerCRServo.setPower(-1);
             lastRightBumper = true;
 
         } else if (gamepad1.left_bumper) {
 
+
             lastLeftBumper = true;
             intakeMotor.setPower(-0.5);
             rollerCRServo.setPower(1);
 
         } else {
-
+            boxWheel.setPower(0);
             intakeMotor.setPower(0);
             rollerCRServo.setPower(0);
             lastLeftBumper = false;
+
+        }
+
+
+
+        if (gamepad1.b) {
+
+            if (!isBPressed) {
+
+                boxWheelTime.reset();
+                boxWheelStarted = true;
+
+            }
+
+            isBPressed = true;
+
+        } else {
+
+            isBPressed = false;
+
+        }
+
+        if (boxWheelStarted && boxWheelTime.seconds() < 0.25) {
+
+            boxWheel.setPower(-0.5);
+
+        } else if (gamepad1.right_bumper) {
+
+            boxWheel.setPower(1);
+
+        } else {
+
+            boxWheel.setPower(0);
 
         }
 
@@ -351,7 +511,21 @@ public class AttachmentControl {
 
     public void intakeAuto() {
 
-        intakeMotor.setPower(-0.35);
+        intakeMotor.setPower(1);
+        rollerCRServo.setPower(-1);
+
+    }
+
+    public void intakeStop() {
+
+        intakeMotor.setPower(0);
+        rollerCRServo.setPower(0);
+
+    }
+
+    public void intakeSpit() {
+
+        intakeMotor.setPower(-0.5);
         rollerCRServo.setPower(1);
 
     }
@@ -364,7 +538,6 @@ public class AttachmentControl {
         while (time.seconds() < 1.25) {
 
             intakeMotor.setPower(-0.15);
-
         }
 
         intakeMotor.setPower(0);
@@ -373,7 +546,7 @@ public class AttachmentControl {
 
     public void droneTeleOp() {
 
-        if (gamepad1.a) {
+        if (gamepad2.b) {
 
             droneServo.setPosition(0.5);
 

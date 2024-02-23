@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.robotcontroller.H2OLoo.samples;
 
-import com.ftc.waterloo.h2oloobots.DriveTrain;
+import com.ftc.waterloo.h2oloobots.*;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
