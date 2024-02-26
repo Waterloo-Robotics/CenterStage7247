@@ -19,6 +19,7 @@ public class AudienceBlue extends H2OLooAuto {
         initCamera(CameraControl.Alliance.BLUE);
 
         while (opModeInInit()) {
+            cameraControl.stream();
             location = cameraControl.getLocation();
             telemetryControl.addData("Prop Location", location);
             telemetryControl.update();
@@ -51,8 +52,8 @@ public class AudienceBlue extends H2OLooAuto {
         switch (location) {
 
             case LEFT:
-                driveTrain.EncoderAutoMecanumDrive(4, 0, 38, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(0, -33, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(4, 0, 39, 0.5, 1.5);
+                driveTrain.EncoderAutoMecanumDrive(0, -31, 0, 0.5, 2);
 //                driveTrain.imuAbsTurn(90, 2);
                 attachmentControl.scoreAudience();
                 sleep(6000);
@@ -64,8 +65,9 @@ public class AudienceBlue extends H2OLooAuto {
 
             default:
             case CENTER:
-                driveTrain.EncoderAutoMecanumDrive(0, -14, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-26, 0, 0, 0.5, 1.75);
+                driveTrain.EncoderAutoMecanumDrive(3, 0, 0, 0.5, 1);
+                driveTrain.EncoderAutoMecanumDrive(0, -14, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-25, 0, 0, 0.5, 4);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 83, 0.5, 1.5);
 //                driveTrain.imuAbsTurn(90, 2);
                 attachmentControl.scoreAudience();
@@ -96,7 +98,7 @@ public class AudienceBlue extends H2OLooAuto {
         switch (location) {
 
             case LEFT:
-                driveTrain.EncoderAutoMecanumDrive(-9, 0, 3, 0.5, 1);
+                driveTrain.EncoderAutoMecanumDrive(-7, 0, 3, 0.5, 1);
                 break;
 
             case CENTER:

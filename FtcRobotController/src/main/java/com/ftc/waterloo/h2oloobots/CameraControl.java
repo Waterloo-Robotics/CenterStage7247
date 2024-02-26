@@ -41,12 +41,12 @@ public class CameraControl {
     int width = 640;
     int height = 480;
     OpenCvWebcam openCvWebcam;
-    BluePropPipeline bluePropPipeline;
-    RedPropPipeline redPropPipeline;
+    Object pipeline;
 
     public enum Alliance {
         BLUE,
-        RED
+        RED,
+        IDONTCARE
     }
 
     Alliance alliance = Alliance.RED;
@@ -95,17 +95,23 @@ public class CameraControl {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); // put your camera's name here
         openCvWebcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        bluePropPipeline = new BluePropPipeline(width);
-        redPropPipeline = new RedPropPipeline(width);
         switch (alliance) {
             case RED:
-                openCvWebcam.setPipeline(redPropPipeline);
-            break;
+                pipeline = new RedPropPipeline(640);
+                break;
 
             case BLUE:
-                openCvWebcam.setPipeline(bluePropPipeline);
-            break;
+                pipeline = new BluePropPipeline(640);
+                break;
+
+            default:
+            case IDONTCARE:
+                pipeline = new AnyPropPipeline(640);
+                break;
+
         }
+
+        openCvWebcam.setPipeline((OpenCvPipeline) pipeline);
         openCvWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -141,14 +147,21 @@ public class CameraControl {
         PropLocation location;
         switch (alliance) {
 
+            case RED:
+                RedPropPipeline redPropPipeline = (RedPropPipeline) pipeline;
+                location = redPropPipeline.getLocation();
+                break;
+
             case BLUE:
+                BluePropPipeline bluePropPipeline = (BluePropPipeline) pipeline;
                 location = bluePropPipeline.getLocation();
-            break;
+                break;
 
             default:
-            case RED:
-                location = redPropPipeline.getLocation();
-            break;
+            case IDONTCARE:
+                AnyPropPipeline anyPropPipeline = (AnyPropPipeline) pipeline;
+                location = anyPropPipeline.getLocation();
+                break;
 
         }
 
@@ -327,9 +340,11 @@ class AnyPropPipeline extends OpenCvPipeline {
             circleCenter = new Point(Math.round(c[0]), Math.round(c[1]));
             // circle center
             Imgproc.circle(input, circleCenter, 1, new Scalar(0,100,100), 3, 8, 0 );
+            Imgproc.circle(grey, circleCenter, 1, new Scalar(0,100,100), 3, 8, 0 );
             // circle outline
             int radius = (int) Math.round(c[2]);
             Imgproc.circle(input, circleCenter, radius, new Scalar(255,255,255), 3, 8, 0 );
+            Imgproc.circle(grey, circleCenter, radius, new Scalar(255,255,0), 3, 8, 0 );
         }
 
         // Iterate and check whether the bounding boxes
@@ -364,10 +379,10 @@ class AnyPropPipeline extends OpenCvPipeline {
 //            location = CameraControl.PropLocation.CENTER;
 //        }
 
-        grey.release();
+//        grey.release();
         circles.release();
-        return input; // return the mat with rectangles drawn
-//        return grey; // return the mat with rectangles drawn
+//        return input; // return the mat with rectangles drawn
+        return grey; // return the mat with rectangles drawn
 
     }
 

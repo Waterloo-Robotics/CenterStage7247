@@ -426,7 +426,7 @@ public class AttachmentControl {
 
     public void drop() {
 
-        boxWheel.setPower(-1);
+        boxWheel.setPower(-0.25);
 
     }
 
