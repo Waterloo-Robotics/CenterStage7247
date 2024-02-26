@@ -306,32 +306,17 @@ class AnyPropPipeline extends OpenCvPipeline {
         // If it finds one regular stone then the other must be the skystone.
         // If both are regular stones, it returns NONE to tell the robot to keep looking
 
-        // Make a working copy of the input matrix in HSV
-        Mat mat = new Mat();
-//        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-
         // if something is wrong, we assume there's no skystone
         if (input.empty()) {
             location = CameraControl.PropLocation.NONE;
             return input;
         }
-
-        // We create a HSV range for yellow to detect regular stones
-        // NOTE: In OpenCV's implementation,
-        // Hue values are half the real value
-//        Scalar upperBlue = new Scalar(139, 255, 180);
-//        Scalar lowerBlue = new Scalar(98, 50, 25);
-//        Scalar upperRed = new Scalar(15, 255, 255);
-//        Scalar lowerRed = new Scalar(0, 50, 25);
-//        Mat thresh = new Mat();
         //Circle detection
         Mat grey = new Mat();
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_BGR2GRAY);
         Imgproc.medianBlur(grey, grey, 5);
         Mat circles = new Mat();
-        Mat black = new Mat();
         Point circleCenter = new Point();
-        Imgproc.rectangle(black, new Point(0, 0), new Point(width, 480), new Scalar(0, 0, 0, 0));
 
         Imgproc.HoughCircles(grey, circles, Imgproc.HOUGH_GRADIENT, 1.0,
                 (double)grey.rows()/16, // change this value to detect circles with different distances to each other
@@ -345,56 +330,7 @@ class AnyPropPipeline extends OpenCvPipeline {
             // circle outline
             int radius = (int) Math.round(c[2]);
             Imgproc.circle(input, circleCenter, radius, new Scalar(255,255,255), 3, 8, 0 );
-            Imgproc.circle(black, circleCenter, radius, new Scalar(255,255,255), radius, 8, 0 );
         }
-
-
-        // We'll get a black and white image. The white regions represent the regular stones.
-        // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
-//        Core.inRange(mat, lowerRed, upperRed, thresh);
-//        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_OPEN, new Mat());
-//        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, new Mat());
-
-//        Imgproc.GaussianBlur(thresh, thresh, new Size(5.0, 15.0), 0.0);
-
-        // Use Canny Edge Detection to find edges
-        // you might have to tune the thresholds for hysteresis
-//        Mat edges = new Mat();
-//        Imgproc.Canny(thresh, edges, 100, 300);
-
-        // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
-        // Oftentimes the edges are disconnected. findContours connects these edges.
-        // We then find the bounding rectangles of those contours
-//        List<MatOfPoint> contours = new ArrayList<>();
-//        Mat hierarchy = new Mat();
-//        Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-//        double maxVal = 0;
-//        int maxValIdx = 0;
-//        if (!contours.isEmpty()) {
-//            for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
-
-//                double contourArea = Imgproc.contourArea(contours.get(contourIdx));
-//                if (Imgproc.isContourConvex(contours.get(contourIdx)) == true) {
-//                    if (maxVal < contourArea) {
-//                        maxVal = contourArea;
-//                        maxValIdx = contourIdx;
-//                    }
-//                }
-//            }
-//        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
-//            Imgproc.drawContours(input, contours, maxValIdx, new Scalar(255, 0, 0));
-
-//            MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
-//            Rect[] boundRect = new Rect[contours.size()];
-//        for (int i = 0; i < contours.size(); i++) {
-//            contoursPoly[i] = new MatOfPoint2f();
-//            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
-//            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
-//        }
-
-//            contoursPoly[maxValIdx] = new MatOfPoint2f();
-//            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(maxValIdx).toArray()), contoursPoly[maxValIdx], 3, true);
-//            boundRect[maxValIdx] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[maxValIdx].toArray()));
 
         // Iterate and check whether the bounding boxes
         // cover left and/or right side of the image
@@ -403,25 +339,6 @@ class AnyPropPipeline extends OpenCvPipeline {
         boolean left = false; // true if regular stone found on the left side
         boolean right = false; // "" "" on the right side
         boolean center = false;
-//        for (int i = 0; i != boundRect.length; i++) {
-//            if (boundRect[i].x < left_x)
-//                left = true;
-//            else if (boundRect[i].x + boundRect[i].width > right_x)
-//                right = true;
-//            else
-//                center = true;
-//
-//            // draw red bounding rectangles on mat
-//            // the mat has been converted to HSV so we need to use HSV as well
-//            Imgproc.rectangle(input, boundRect[i], new Scalar(0.5, 76.9, 89.8));
-//        }
-
-//            if (boundRect[maxValIdx].x < left_x)
-//                left = true;
-//            else if (boundRect[maxValIdx].x + boundRect[maxValIdx].width > right_x)
-//                right = true;
-//            else
-//                center = true;
 
         if (circleCenter.x < left_x)
             left = true;
@@ -447,8 +364,11 @@ class AnyPropPipeline extends OpenCvPipeline {
 //            location = CameraControl.PropLocation.CENTER;
 //        }
 
-//        return input; // return the mat with rectangles drawn
-        return grey; // return the mat with rectangles drawn
+        grey.release();
+        circles.release();
+        return input; // return the mat with rectangles drawn
+//        return grey; // return the mat with rectangles drawn
+
     }
 
     public CameraControl.PropLocation getLocation() {
@@ -498,8 +418,6 @@ class RedPropPipeline extends OpenCvPipeline {
         Scalar upperRed = new Scalar(15, 255, 255);
         Scalar lowerRed = new Scalar(0, 50, 25);
         Mat thresh = new Mat();
-        //Circle detection
-        Mat grey = new Mat();
 
 
         // We'll get a black and white image. The white regions represent the regular stones.
@@ -512,8 +430,8 @@ class RedPropPipeline extends OpenCvPipeline {
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
-//        Mat edges = new Mat();
-//        Imgproc.Canny(thresh, edges, 100, 300);
+        Mat edges = new Mat();
+        Imgproc.Canny(thresh, edges, 100, 300);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
@@ -534,40 +452,40 @@ class RedPropPipeline extends OpenCvPipeline {
                     }
                 }
             }
-        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
+//        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
             Imgproc.drawContours(input, contours, maxValIdx, new Scalar(255, 0, 0));
 
             MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
             Rect[] boundRect = new Rect[contours.size()];
-        for (int i = 0; i < contours.size(); i++) {
-            contoursPoly[i] = new MatOfPoint2f();
-            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
-            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
-        }
+            for (int i = 0; i < contours.size(); i++) {
+                contoursPoly[i] = new MatOfPoint2f();
+                Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+                boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            }
 
             contoursPoly[maxValIdx] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(maxValIdx).toArray()), contoursPoly[maxValIdx], 3, true);
             boundRect[maxValIdx] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[maxValIdx].toArray()));
 
-        // Iterate and check whether the bounding boxes
-        // cover left and/or right side of the image
-        double left_x = 0.2 * width;
-        double right_x = 0.7 * width;
-        boolean left = false; // true if regular stone found on the left side
-        boolean right = false; // "" "" on the right side
-        boolean center = false;
-        for (int i = 0; i != boundRect.length; i++) {
-            if (boundRect[i].x < left_x)
-                left = true;
-            else if (boundRect[i].x + boundRect[i].width > right_x)
-                right = true;
-            else
-                center = true;
+            // Iterate and check whether the bounding boxes
+            // cover left and/or right side of the image
+            double left_x = 0.2 * width;
+            double right_x = 0.7 * width;
+            boolean left = false; // true if regular stone found on the left side
+            boolean right = false; // "" "" on the right side
+            boolean center = false;
+//        for (int i = 0; i != boundRect.length; i++) {
+//            if (boundRect[i].x < left_x)
+//                left = true;
+//            else if (boundRect[i].x + boundRect[i].width > right_x)
+//                right = true;
+//            else
+//                center = true;
 
             // draw red bounding rectangles on mat
             // the mat has been converted to HSV so we need to use HSV as well
-            Imgproc.rectangle(input, boundRect[i], new Scalar(0.5, 76.9, 89.8));
-        }
+//            Imgproc.rectangle(input, boundRect[i], new Scalar(0.5, 76.9, 89.8));
+//        }
 
             if (boundRect[maxValIdx].x < left_x)
                 left = true;
@@ -576,25 +494,27 @@ class RedPropPipeline extends OpenCvPipeline {
             else
                 center = true;
 
-        // draw red bounding rectangles on mat
-        // the mat has been converted to HSV so we need to use HSV as well
-//            Imgproc.rectangle(input, boundRect[maxValIdx], new Scalar(0.5, 76.9, 89.8));
+            // draw red bounding rectangles on mat
+            // the mat has been converted to HSV so we need to use HSV as well
+            Imgproc.rectangle(input, boundRect[maxValIdx], new Scalar(0.5, 76.9, 89.8));
 
-        // if there is no yellow regions on a side
-        // that side should be a Skystone
-        if (left) location = CameraControl.PropLocation.LEFT;
-        else if (right) location = CameraControl.PropLocation.RIGHT;
-        else if (center) location = CameraControl.PropLocation.CENTER;
-            // if both are true, then there's no Skystone in front.
-            // since our team's camera can only detect two at a time
-            // we will need to scan the next 2 stones
-        else location = CameraControl.PropLocation.NONE;
+            // if there is no yellow regions on a side
+            // that side should be a Skystone
+            if (left) location = CameraControl.PropLocation.LEFT;
+            else if (right) location = CameraControl.PropLocation.RIGHT;
+            else if (center) location = CameraControl.PropLocation.CENTER;
+                // if both are true, then there's no Skystone in front.
+                // since our team's camera can only detect two at a time
+                // we will need to scan the next 2 stones
+            else location = CameraControl.PropLocation.NONE;
         } else {
             location = CameraControl.PropLocation.CENTER;
         }
 
+        mat.release();
+        thresh.release();
+        edges.release();
         return input; // return the mat with rectangles drawn
-//        return grey; // return the mat with rectangles drawn
     }
 
     public CameraControl.PropLocation getLocation() {
@@ -735,6 +655,9 @@ class BluePropPipeline extends OpenCvPipeline {
             location = CameraControl.PropLocation.CENTER;
         }
 
+        mat.release();
+        thresh.release();
+        edges.release();
         return input; // return the mat with rectangles drawn
     }
 

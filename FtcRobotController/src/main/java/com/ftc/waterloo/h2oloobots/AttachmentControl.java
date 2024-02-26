@@ -39,18 +39,25 @@ public class AttachmentControl {
     boolean isUpPressedOnce = true;
     public DcMotor hangMotor;
     Servo hangServo;
-    boolean isGP2APressed = false;
     boolean isBPressed = false;
     TouchSensor leftTouch, rightTouch;
     ElapsedTime boxWheelTime = new ElapsedTime();
     boolean boxWheelStarted = false;
+    ElapsedTime gp2ATime = new ElapsedTime();
+    boolean isGP2APressed = false;
+
+    boolean isManualShutStarted = false;
+    ElapsedTime manualShutTime = new ElapsedTime();
+    boolean isManualOpenStarted = false;
+    ElapsedTime manualOpenTime = new ElapsedTime();
 
     public enum ArmState {
 
         INTAKE,
         SCORE_MED,
         SCORE_LOW,
-        SCORE_HIGH
+        SCORE_HIGH,
+        MANUAL
 
     }
 
@@ -69,12 +76,13 @@ public class AttachmentControl {
         boxServoLeft = hardwareMap.servo.get("boxServoLeft");
         boxServoLeft.setDirection(Servo.Direction.REVERSE);
 //        boxServoLeft.scaleRange(0, 0.686);
-        boxServoLeft.setPosition(0.877);
+        boxServoLeft.setPosition(0.827);
         boxServoRight = hardwareMap.servo.get("boxServoRight");
 //        boxServoRight.scaleRange(0, 0.686);
-        boxServoRight.setPosition(0.877);
+        boxServoRight.setPosition(0.827);
         boxDoorServo = hardwareMap.servo.get("boxDoorServo");
-        boxDoorServo.scaleRange(0, 0.5);
+        boxDoorServo.scaleRange(0.08, 0.39);
+        boxDoorServo.setPosition(0);
 
         extLeft = hardwareMap.servo.get("extLeft");
         extLeft.scaleRange(0.23, 0.82);
@@ -202,6 +210,8 @@ public class AttachmentControl {
 
     public void liftTeleOp() {
 
+        int liftTargetPosition = liftGroup.getTargetPosition();
+
         if (gamepad2.dpad_down || gamepad1.dpad_down) {
 
             liftGroup.setTargetPosition(0);
@@ -212,78 +222,135 @@ public class AttachmentControl {
             extRight.setPosition(0);
             armState = ArmState.INTAKE;
             downTime.reset();
-            boxDoorServo.setPosition(0.38);
+            isManualShutStarted = true;
+            isManualOpenStarted = false;
 
         } else if (gamepad2.dpad_up || gamepad1.dpad_up) {
 
             upTime.reset();
             armState = ArmState.SCORE_LOW;
-            boxDoorServo.setPosition(0.38);
+            liftGroup.setTargetPosition(-750);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
+            isManualShutStarted = false;
+            isManualOpenStarted = true;
 
         } else if (gamepad2.dpad_right || gamepad1.dpad_right) {
 
             if (armState == ArmState.INTAKE) upTime.reset();
             armState = ArmState.SCORE_MED;
             liftGroup.setTargetPosition(-1200);
-            boxDoorServo.setPosition(0.38);
+            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hangServo.setPosition(0.84);
+            boxServoLeft.setPosition(0.51);
+            boxServoRight.setPosition(0.51);
+            isManualShutStarted = false;
+            isManualOpenStarted = true;
 
         } else if (gamepad2.dpad_left || gamepad1.dpad_left) {
 
             if (armState == ArmState.INTAKE) upTime.reset();
             armState = ArmState.SCORE_HIGH;
-            boxDoorServo.setPosition(0.38);
-
-        }
-
-        if (armState == ArmState.SCORE_LOW && upTime.seconds() > 0.5) {
-
-            liftGroup.setTargetPosition(-750);
-            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hangServo.setPosition(0.84);
-            boxServoLeft.setPosition(0.5);
-            boxServoRight.setPosition(0.5);
-            boxServoLeft.setPosition(0.51);
-            boxServoRight.setPosition(0.51);
-
-        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 0.5) {
-
             liftGroup.setTargetPosition(-1950);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.51);
             boxServoRight.setPosition(0.51);
+            isManualShutStarted = false;
+            isManualOpenStarted = true;
 
-        } else if (armState == ArmState.SCORE_MED && upTime.seconds() > 0.5) {
+        } else if (Math.abs(gamepad2.right_stick_y) > 0.1) {
 
-            liftGroup.setTargetPosition(-1200);
-            liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hangServo.setPosition(0.84);
-            boxServoLeft.setPosition(0.51);
-            boxServoRight.setPosition(0.51);
+            armState = ArmState.MANUAL;
+            liftTargetPosition = (int) liftGroup.getCurrentPosition();
 
         }
 
-        if (armState == ArmState.SCORE_LOW && upTime.seconds() > 1) {
+        if (upTime.seconds() > 0.5) {
 
-            extLeft.setPosition(1);
-            extRight.setPosition(1);
+            if (armState == ArmState.SCORE_LOW) {
 
-        } else if (armState == ArmState.SCORE_HIGH && upTime.seconds() > 1) {
+                extLeft.setPosition(1);
+                extRight.setPosition(1);
 
-            extLeft.setPosition(1);
-            extRight.setPosition(1);
+            } else if (armState == ArmState.SCORE_HIGH) {
 
-        } else if (armState == ArmState.SCORE_MED && upTime.seconds() > 1) {
+                extLeft.setPosition(1);
+                extRight.setPosition(1);
 
-            extLeft.setPosition(1);
-            extRight.setPosition(1);
+            } else if (armState == ArmState.SCORE_MED) {
+
+                extLeft.setPosition(1);
+                extRight.setPosition(1);
+
+            }
 
         }
 
         if (armState == ArmState.INTAKE && downTime.seconds() > 2.0) {
 
-            boxServoLeft.setPosition(0.877);
-            boxServoRight.setPosition(0.877);
+            boxServoLeft.setPosition(0.827);
+            boxServoRight.setPosition(0.827);
+
+        }
+
+        if (armState == ArmState.MANUAL) {
+
+            if (gamepad2.right_stick_y > 0) {
+
+                liftTargetPosition += (int) (gamepad2.right_stick_y * 150);
+
+            } else {
+
+                liftTargetPosition += (int) (gamepad2.right_stick_y * 150);
+
+            }
+            if (liftTargetPosition < -1950) liftTargetPosition = -1950;
+            if (liftTargetPosition > 0) liftTargetPosition = 0;
+
+            liftGroup.setTargetPosition(liftTargetPosition);
+
+            if (liftTargetPosition < -100) hangServo.setPosition(0.84);
+            else hangServo.setPosition(0);
+
+            if (liftTargetPosition < -100 && !isManualOpenStarted) {
+
+                isManualOpenStarted = true;
+                isManualShutStarted = false;
+                manualOpenTime.reset();
+                boxServoLeft.setPosition(0.69);
+                boxServoRight.setPosition(0.69);
+
+            } else if (liftTargetPosition >= -100 && !isManualShutStarted) {
+
+                isManualOpenStarted = false;
+                isManualShutStarted = true;
+                manualShutTime.reset();
+                boxServoLeft.setPosition(0.69);
+                boxServoRight.setPosition(0.69);
+                extLeft.setPosition(0);
+                extRight.setPosition(0);
+
+            }
+
+            if (isManualOpenStarted && manualOpenTime.seconds() > 0.5) {
+
+                extLeft.setPosition(1);
+                extRight.setPosition(1);
+                boxServoLeft.setPosition(0.51);
+                boxServoRight.setPosition(0.51);
+
+            }
+
+            if (isManualShutStarted && manualShutTime.seconds() > 2.0) {
+
+                boxServoLeft.setPosition(0.827);
+                boxServoRight.setPosition(0.827);
+
+            }
+
 
         }
 
@@ -301,6 +368,9 @@ public class AttachmentControl {
             else liftGroup.setPower(1);
 
         }
+
+        telemetryControl.addData("Arm State", armState);
+        telemetryControl.addData("Lift Target Position", liftTargetPosition);
 
     }
 
@@ -356,7 +426,7 @@ public class AttachmentControl {
 
     public void drop() {
 
-        boxDoorServo.setPosition(0.38);
+        boxWheel.setPower(-1);
 
     }
 
@@ -419,32 +489,17 @@ public class AttachmentControl {
 
     public void hangServoTeleOp() {
 
-        if (gamepad2.a) {
+        if (gamepad2.a && !isGP2APressed) {
 
-            if (!isGP2APressed) {
+            gp2ATime.reset();
 
-                if (hangServo.getPosition() < 0.05) {
+        }
 
-                    hangServo.setPosition(0.845);
+        isGP2APressed = gamepad2.a;
 
-                } else if (hangServo.getPosition() < 0.95) {
+        if (isGP2APressed && gp2ATime.seconds() > 1) {
 
-                    hangServo.setPosition(1);
-
-                } else {
-
-                    hangServo.setPosition(0);
-
-                }
-
-
-            }
-
-            isGP2APressed = true;
-
-        } else {
-
-            isGP2APressed = false;
+            boxDoorServo.setPosition(1);
 
         }
 
@@ -546,7 +601,7 @@ public class AttachmentControl {
 
     public void droneTeleOp() {
 
-        if (gamepad2.b) {
+        if (gamepad2.y) {
 
             droneServo.setPosition(0.5);
 

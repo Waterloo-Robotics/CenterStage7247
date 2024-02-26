@@ -3,9 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.ftc.waterloo.h2oloobots.*;
 import com.ftc.waterloo.h2oloobots.H2OLooTeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "7247 TeleOp", group = "!")
 public class TeleOp7247 extends H2OLooTeleOp {
+
+    int ticks = 0;
+    boolean tickTestStarted = false;
+    ElapsedTime time = new ElapsedTime();
 
     @Override
     public void opModeInit() {
@@ -17,6 +22,16 @@ public class TeleOp7247 extends H2OLooTeleOp {
 
     @Override
     public void opModePeriodic() {
+        if (!tickTestStarted) {
+
+            tickTestStarted = true;
+            time.reset();
+
+        }
+
+        ticks++;
+        telemetryControl.addData("ticks", ticks);
+        telemetryControl.addData("tps", ticks / time.seconds());
 
         /* Controlling our actual drivetrain. We pass in attachmentControl to slow down the robot
         *  when the servo is extended*/
