@@ -420,7 +420,7 @@ class RedPropPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         // if something is wrong, we assume there's no skystone
-        if (input.empty()) {
+        if (mat.empty()) {
             location = CameraControl.PropLocation.NONE;
             return input;
         }
@@ -428,12 +428,11 @@ class RedPropPipeline extends OpenCvPipeline {
         // We create a HSV range for yellow to detect regular stones
         // NOTE: In OpenCV's implementation,
         // Hue values are half the real value
-//        Scalar upperBlue = new Scalar(139, 255, 180);
-//        Scalar lowerBlue = new Scalar(98, 50, 25);
+        Scalar upperBlue = new Scalar(139, 255, 180);
+        Scalar lowerBlue = new Scalar(98, 50, 25);
         Scalar upperRed = new Scalar(15, 255, 255);
         Scalar lowerRed = new Scalar(0, 50, 25);
         Mat thresh = new Mat();
-
 
         // We'll get a black and white image. The white regions represent the regular stones.
         // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
@@ -446,7 +445,7 @@ class RedPropPipeline extends OpenCvPipeline {
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
         Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges, 100, 300);
+//        Imgproc.Canny(thresh, edges, 100, 300);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
@@ -460,23 +459,23 @@ class RedPropPipeline extends OpenCvPipeline {
             for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
 
                 double contourArea = Imgproc.contourArea(contours.get(contourIdx));
-                if (Imgproc.isContourConvex(contours.get(contourIdx)) == true) {
-                    if (maxVal < contourArea) {
-                        maxVal = contourArea;
-                        maxValIdx = contourIdx;
-                    }
+
+                if (maxVal < contourArea) {
+                    maxVal = contourArea;
+                    maxValIdx = contourIdx;
                 }
+
             }
 //        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
             Imgproc.drawContours(input, contours, maxValIdx, new Scalar(255, 0, 0));
 
             MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
             Rect[] boundRect = new Rect[contours.size()];
-            for (int i = 0; i < contours.size(); i++) {
-                contoursPoly[i] = new MatOfPoint2f();
-                Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
-                boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
-            }
+//        for (int i = 0; i < contours.size(); i++) {
+//            contoursPoly[i] = new MatOfPoint2f();
+//            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+//            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+//        }
 
             contoursPoly[maxValIdx] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(maxValIdx).toArray()), contoursPoly[maxValIdx], 3, true);
@@ -484,8 +483,8 @@ class RedPropPipeline extends OpenCvPipeline {
 
             // Iterate and check whether the bounding boxes
             // cover left and/or right side of the image
-            double left_x = 0.2 * width;
-            double right_x = 0.7 * width;
+            double left_x = 0.175 * width;
+            double right_x = 0.825 * width;
             boolean left = false; // true if regular stone found on the left side
             boolean right = false; // "" "" on the right side
             boolean center = false;
@@ -496,9 +495,9 @@ class RedPropPipeline extends OpenCvPipeline {
 //                right = true;
 //            else
 //                center = true;
-
-            // draw red bounding rectangles on mat
-            // the mat has been converted to HSV so we need to use HSV as well
+//
+//            // draw red bounding rectangles on mat
+//            // the mat has been converted to HSV so we need to use HSV as well
 //            Imgproc.rectangle(input, boundRect[i], new Scalar(0.5, 76.9, 89.8));
 //        }
 
@@ -526,9 +525,6 @@ class RedPropPipeline extends OpenCvPipeline {
             location = CameraControl.PropLocation.CENTER;
         }
 
-        mat.release();
-        thresh.release();
-        edges.release();
         return input; // return the mat with rectangles drawn
     }
 
