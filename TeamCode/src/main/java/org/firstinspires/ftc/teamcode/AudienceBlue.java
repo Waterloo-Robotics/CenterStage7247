@@ -89,7 +89,7 @@ public class AudienceBlue extends H2OLooAuto {
                 driveTrain.EncoderAutoMecanumDrive(-76, 0, 0, 0.5, 3);
 //                driveTrain.imuAbsTurn(90, 2);
                 attachmentControl.scoreAudience2();
-                driveTrain.EncoderAutoMecanumDrive(0, 20, 0, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(0, 24.5, 0, 0.5, 2);
                 break;
 
         }

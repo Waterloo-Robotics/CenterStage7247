@@ -525,6 +525,9 @@ class RedPropPipeline extends OpenCvPipeline {
             location = CameraControl.PropLocation.CENTER;
         }
 
+        mat.release();
+        thresh.release();
+        edges.release();
         return input; // return the mat with rectangles drawn
     }
 

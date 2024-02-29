@@ -413,6 +413,98 @@ public class DriveTrain {
 
     }
 
+    /**Four Wheel Autonomous for a Mecanum Drivetrain using inches and degrees
+     * @param INCHES_FB The inches forwards/backwards to drive (positive is forwards,
+     *        negative is backwards)
+     * @param INCHES_LR The inches left/right to drive (positive is right,
+     *        negative is left)
+     * @param DEGREES_TURN The degrees to turn (positive is clockwise,
+     *        negative is counterclockwise)*/
+    public void EncoderAutoMecanumDriveWithErrorAccountability(double INCHES_FB, double INCHES_LR, double DEGREES_TURN, double SPEED, double time) {
+
+        boolean isTimerStarted = false;
+        ElapsedTime errorTime = new ElapsedTime();
+
+        ElapsedTime timer = new ElapsedTime();
+
+        if (DEGREES_TURN > 180) {
+
+            DEGREES_TURN -= 360;
+
+        }
+
+        int frTargetPosition = fr.getCurrentPosition()
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                + (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
+        int brTargetPosition = br.getCurrentPosition()
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                - (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                - (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
+        int flTargetPosition = fl.getCurrentPosition()
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                - (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
+        int blTargetPosition = bl.getCurrentPosition()
+                - (int) (this.COUNTS_PER_INCH * INCHES_FB)
+                + (int) (this.COUNTS_PER_INCH * INCHES_LR)
+                + (int) (this.COUNTS_PER_DEGREE * DEGREES_TURN);
+
+        fr.setTargetPosition(frTargetPosition);
+        br.setTargetPosition(brTargetPosition);
+        fl.setTargetPosition(flTargetPosition);
+        bl.setTargetPosition(blTargetPosition);
+
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        timer.reset();
+
+        while ((fr.isBusy() ||
+                br.isBusy() ||
+                fl.isBusy() ||
+                bl.isBusy()) &&
+                timer.seconds() <= time && (!isTimerStarted || errorTime.seconds() < 1)) {
+
+            fr.setPower(SPEED);
+            br.setPower(SPEED);
+            fl.setPower(SPEED);
+            bl.setPower(SPEED);
+
+            if (!isTimerStarted && (!fr.isBusy() && !br.isBusy() && !fl.isBusy() && !bl.isBusy())) {
+
+                errorTime.reset();
+                isTimerStarted = true;
+
+            } else if (fr.isBusy() || br.isBusy() || fl.isBusy() || bl.isBusy()) isTimerStarted = false;
+
+            telemetryControl.addData("Timer Started", isTimerStarted);
+            telemetryControl.addData("Error Time", errorTime.seconds());
+            telemetryControl.update();
+
+//            this.imuTelemetry();
+//            telemetryControl.update();
+
+        }
+
+        fr.setPower(0);
+        br.setPower(0);
+        fl.setPower(0);
+        bl.setPower(0);
+
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        ElapsedTime waitTimer = new ElapsedTime();
+        waitTimer.reset();
+        while (waitTimer.seconds() <= 0.25);
+
+    }
+
     public void imuTurn(double DEGREES, double CANCEL_TIME_SECONDS) {
 
         double error = 0;

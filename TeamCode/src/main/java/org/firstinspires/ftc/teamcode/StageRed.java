@@ -100,7 +100,7 @@ public class StageRed extends H2OLooAuto {
         attachmentControl.drop();
         sleep(500);
         attachmentControl.lift();
-        sleep(500);
+        sleep(1000);
         driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.75, 1);
         while (attachmentControl.liftGroup.isBusy());
 

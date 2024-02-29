@@ -229,7 +229,7 @@ public class AttachmentControl {
 
             upTime.reset();
             armState = ArmState.SCORE_LOW;
-            liftGroup.setTargetPosition(-750);
+            liftGroup.setTargetPosition(-508);
             liftGroup.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hangServo.setPosition(0.84);
             boxServoLeft.setPosition(0.51);
@@ -432,8 +432,8 @@ public class AttachmentControl {
 
     public void lift() {
 
-        boxServoLeft.setPosition(0.43);
-        boxServoRight.setPosition(0.43);
+        boxServoLeft.setPosition(0.3);
+        boxServoRight.setPosition(0.3);
 
     }
 
@@ -497,7 +497,7 @@ public class AttachmentControl {
 
         isGP2APressed = gamepad2.a;
 
-        if (isGP2APressed && gp2ATime.seconds() > 1) {
+        if (isGP2APressed && gp2ATime.seconds() > 0.5) {
 
             boxDoorServo.setPosition(1);
 

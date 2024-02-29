@@ -74,26 +74,26 @@ public class AudienceRed extends H2OLooAuto {
 
                 driveTrain.EncoderAutoMecanumDrive(2, 0, 0, 0.5, 0.75);
                 driveTrain.EncoderAutoMecanumDrive(0, 18, 0, 0.5, 1.5);
-                driveTrain.EncoderAutoMecanumDrive(-27, 0, 0, 0.5, 2);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDriveWithErrorAccountability(-23, 0, 0, 0.5, 4);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -85, 0.5, 4);
                 attachmentControl.scoreAudience();
-                sleep(8000);
+                sleep(6000);
                 driveTrain.EncoderAutoMecanumDrive(-92, 0, 0, 0.5, 3.75);
                 attachmentControl.scoreAudience2();
-                driveTrain.EncoderAutoMecanumDrive(0, -29, 0, 0.5, 3.75);
+                driveTrain.EncoderAutoMecanumDrive(0, -27, 0, 0.5, 3.75);
                 break;
 
             case RIGHT:
 
                 driveTrain.EncoderAutoMecanumDrive(4, 0, 0, 0.5, 0.5);
                 driveTrain.EncoderAutoMecanumDrive(0, 0, 70, 0.5, 1.25);
-                driveTrain.EncoderAutoMecanumDrive(-26, 0, 0, 0.5, 1.25);
-                driveTrain.EncoderAutoMecanumDrive(0, 0, -92, 0.5, 2);
+                driveTrain.EncoderAutoMecanumDrive(-26, 0, 0, 0.5, 2.5);
+                driveTrain.EncoderAutoMecanumDrive(0, 0, -94, 0.5, 3);
                 attachmentControl.scoreAudience();
                 sleep(8000);
                 driveTrain.EncoderAutoMecanumDrive(-78, 0, 0, 0.5, 3);
                 attachmentControl.scoreAudience2();
-                driveTrain.EncoderAutoMecanumDrive(0, -42, 0, 0.5, 3);
+                driveTrain.EncoderAutoMecanumDrive(0, -38, 0, 0.5, 3);
                 break;
         }
 
